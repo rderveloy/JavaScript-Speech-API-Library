@@ -61,8 +61,8 @@ var SpeechAPI =
         }, //End executeFunctionIfVoicesInstalled
         utter : function(textToSpeak)
         {
-            STRING_TYPE  = 'string';
-            EMPTY_STRING = '';
+            var STRING_TYPE  = 'string';
+            var EMPTY_STRING = '';
             if(textToSpeak)
             {
                 if(typeof textToSpeak == STRING_TYPE)
@@ -112,8 +112,8 @@ var browserTTSUtterance =
 {
     utter: function(text)
     {
-        STRING_TYPE  = 'string';
-        EMPTY_STRING = '';
+        var STRING_TYPE  = 'string';
+        var EMPTY_STRING = '';
         if(text)
         {
             if(typeof text == STRING_TYPE)
