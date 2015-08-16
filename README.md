@@ -10,9 +10,9 @@ Note: Some browsers may require this to be hosted from a server in order to run 
 #Compatability:
 
 This is known to work correctly with the following browsers:
-- Chrome
-- Opera
-- Firefox* (See Known Issues)
+- Chrome  (44.0.2403.155 m)
+- Opera   (31.0.1889.161)
+- Firefox (39.0.3) - (See Known Issues)
 
 #Known Issues:
 
