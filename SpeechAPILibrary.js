@@ -59,19 +59,19 @@ var SpeechAPI =
 
             window.speechSynthesis.onvoiceschanged = scopePreserverWrapper(desiredFunctionToExecute);
         }, //End executeFunctionIfVoicesInstalled
-        utter : function(textToSpeak)
+        utter : function(textToSpeek)
         {
             STRING_TYPE  = 'string';
             EMPTY_STRING = '';
-            if(textToSpeak)
+            if(textToSpeek)
             {
-                if(typeof textToSpeak == STRING_TYPE)
+                if(typeof textToSpeek == STRING_TYPE)
                 {
-                    if(textToSpeak != EMPTY_STRING)
+                    if(textToSpeek != EMPTY_STRING)
                     {
                         if(SpeechAPI.TextToSpeech.isSupported())
                         {
-                            var msg = new SpeechSynthesisUtterance(textToSpeak);            
+                            var msg = new SpeechSynthesisUtterance(textToSpeek);
                             speechSynthesis.speak(msg);            
                         }
                         else
