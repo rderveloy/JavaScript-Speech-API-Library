@@ -33,7 +33,7 @@
         </div>
         <div id="div_NoVoicesWarning" name="div_NoVoicesWarning" style="display:none;">
             <p>OOPS!</p>
-            <p>While your browser is indicating that it supports the Speech Synthesis API, it has not responded to our request in a timely fashon.</p>
+            <p>While your browser is indicating that it supports the Speech Synthesis API, it has not responded to our request in a timely fashion.</p>
             <p>This could be caused by a number of different reasons.  The most likely of which is that your browser may not officially support the Speech Synthesis API at this time.</p>
             <p>Please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of capable browsers.</p>
         </div>
@@ -64,19 +64,19 @@
             var elementToHideID = "div_NoJavaScriptWarning";
             document.getElementById(elementToHideID).style.display="none";
 
-            //Here we detect if speach synthesis is supported by the client browser:
+            //Here we detect if speech synthesis is supported by the client browser:
             if(SpeechAPI.TextToSpeech.isSupported())
             {
                 //If it's supported we need to update our UI.
                 console.log("TTS Supported!");
 
                 /*
-                 * The browser my signal it supports speach synthesis, but may not have any voices to
+                 * The browser my signal it supports speech synthesis, but may not have any voices to
                  * use.  So, we need to request the list of installed voices from the browser to
                  * determine what to do next.
                  *
                  * Since the request to get the list of installed voices is processed asynchronously,
-                 * we cannot garantee order of execution, so we display a loading voices notice:
+                 * we cannot guarantee order of execution, so we display a loading voices notice:
                  */
                 var elementToShowID = "div_LoadingVoices";
                 var loadingVoicesDiv = document.getElementById(elementToShowID);
@@ -94,14 +94,11 @@
                 {
                     var ttsInputsDivID = "div_ttsInputs";
                     var ttsInputDiv = document.getElementById(ttsInputsDivID);
-                    var loadingVoicesDivID = "div_LoadingVoices";
-                    var loadingVoicesDiv = document.getElementById(loadingVoicesDivID);
                     var noVoicesWarningDiv = "div_NoVoicesWarning";
                     var noVoicesWarningDiv = document.getElementById(noVoicesWarningDiv);
 
                     if(ttsInputDiv.style.display!="block")
                     {
-                        //loadingVoicesDiv.style.display   ="none";
                         noVoicesWarningDiv.style.display = "block";
                     }
                 };
@@ -112,7 +109,7 @@
                  * has voices installed.
                  *
                  * Testing has shown that the window.speechSynthesis.onvoiceschanged event may
-                 * be triggered multiple times.  Therfore care should be taken in writing the
+                 * be triggered multiple times.  Therefore care should be taken in writing the
                  * payload function.  It will need to be written in a "de-bounce" manner such
                  * that it won't cause any issues if it is executed multiple times.
                  */
@@ -176,7 +173,7 @@
                     }
                 };
 
-                //Send the payload function to the API to be exeuted:
+                //Send the payload function to the API to be executed:
                 SpeechAPI.TextToSpeech.executeFunctionIfVoicesInstalled(payloadFunction);
             }
             else
