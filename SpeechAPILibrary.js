@@ -26,7 +26,7 @@ var SpeechAPI =
             }
             catch(err)
             {
-                var message = "SpeechAPI->TextToSpeech->isSupported(): Exception encoutnered while performing speech synthesis detection.";
+                var message = "SpeechAPI->TextToSpeech->isSupported(): Exception encountered while performing speech synthesis detection.";
                 console.log(message);
                 console.log(err);
             }
@@ -45,7 +45,7 @@ var SpeechAPI =
                     {
                         if(desiredFunctionToExecute)
                         {
-                            console.log('Paylod function exists!');
+                            console.log('Payload function exists!');
                             return desiredFunctionToExecute(voiceArray);
                         }
                     }
@@ -59,19 +59,19 @@ var SpeechAPI =
 
             window.speechSynthesis.onvoiceschanged = scopePreserverWrapper(desiredFunctionToExecute);
         }, //End executeFunctionIfVoicesInstalled
-        utter : function(textToSpeek)
+        utter : function(textToSpeak)
         {
             STRING_TYPE  = 'string';
             EMPTY_STRING = '';
-            if(textToSpeek)
+            if(textToSpeak)
             {
-                if(typeof textToSpeek == STRING_TYPE)
+                if(typeof textToSpeak == STRING_TYPE)
                 {
-                    if(textToSpeek != EMPTY_STRING)
+                    if(textToSpeak != EMPTY_STRING)
                     {
                         if(SpeechAPI.TextToSpeech.isSupported())
                         {
-                            var msg = new SpeechSynthesisUtterance(textToSpeek);
+                            var msg = new SpeechSynthesisUtterance(textToSpeak);
                             speechSynthesis.speak(msg);            
                         }
                         else
@@ -99,7 +99,7 @@ var SpeechAPI =
             }
             catch(err)
             {
-                var message = "SpeechAPI->SpeechToText->isSupported(): Exception encoutnered while performing speech recognition detection.";
+                var message = "SpeechAPI->SpeechToText->isSupported(): Exception encountered while performing speech recognition detection.";
                 console.log(message);
                 console.log(err);
             }
