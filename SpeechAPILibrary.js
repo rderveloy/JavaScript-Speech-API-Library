@@ -26,7 +26,7 @@ var SpeechAPI =
             }
             catch(err)
             {
-                var message = "SpeechAPI->TextToSpeech->isSupported(): Exception encoutnered while performing speech synthesis detection."
+                var message = "SpeechAPI->TextToSpeech->isSupported(): Exception encoutnered while performing speech synthesis detection.";
                 console.log(message);
                 console.log(err);
             }
@@ -99,7 +99,7 @@ var SpeechAPI =
             }
             catch(err)
             {
-                var message = "SpeechAPI->SpeechToText->isSupported(): Exception encoutnered while performing speech recognition detection."
+                var message = "SpeechAPI->SpeechToText->isSupported(): Exception encoutnered while performing speech recognition detection.";
                 console.log(message);
                 console.log(err);
             }
