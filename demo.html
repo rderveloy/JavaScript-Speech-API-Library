@@ -13,6 +13,7 @@
 		<title>JavaScript Speech API Demo</title>		
   </head>
   <body>
+
     <div id="div_NoJavaScriptWarning" name="div_NoJavaScriptWarning">
         <p>
             Sorry!  Your browser does not appear to have JavaScript enabled.  Please enable JavaScript in your browser for this site to function correctly.</p>
@@ -36,137 +37,10 @@
         <p>Please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of capable browsers.</p>
     </div>
     <div id="div_ttsInputs" name="div_ttsInputs" style="display:none;">
-        <input id='input_tts' name='input_tts' value='Son of Jor-El, kneel before Zahd!'></input>
+        <input id='input_tts' name='input_tts' size='256' value='Son of Jor-El, kneel before Zahd!' /> <!-- I know 'Zahd' should be 'Zod', but speech synthesis often requires phonetic spellings!-->
         <button onclick="browserTTSUtterance.utter(document.getElementById('input_tts').value);">Go!</button>
     </div>
-    
-    <script src='SpeechAPILibrary.js'></script>
-    <script>
-      var elementToHideID = "div_NoJavaScriptWarning";
-      document.getElementById(elementToHideID).style.display="none";
-      
-      //Here we detect if speach synthesis is supported by the client browser:
-      if(SpeechAPI.TextToSpeech.isSupported())
-      {
-          //If it's supported we need to update our UI.
-          console.log("TTS Supported!");   
-          
-          /*
-          * The browser my signal it supports speach synthesis, but may not have any voices to
-          * use.  So, we need to request the list of installed voices from the browser to 
-          * determine what to do next.
-          * 
-          * Since the request to get the list of installed voices is processed asynchronously,
-          * we cannot garantee order of execution, so we display a loading voices notice:
-          */
-          var elementToShowID = "div_LoadingVoices";
-          var loadingVoicesDiv = document.getElementById(elementToShowID);
-          if(loadingVoicesDiv.style.display!="block")
-          {
-              loadingVoicesDiv.style.display="block";
-          }
-          
-          /*
-          * We want to give the browser time to respond to the request before showing the no voices
-          * installed warning: 
-          */
-          var TIMEOUT_MILLISECONDS = 2200;
-          var timeoutFunction = function()
-          {
-          	var ttsInputsDivID = "div_ttsInputs";
-              var ttsInputDiv = document.getElementById(ttsInputsDivID);
-              var loadingVoicesDivID = "div_LoadingVoices";
-              var loadingVoicesDiv = document.getElementById(loadingVoicesDivID);
-              var noVoicesWarningDiv = "div_NoVoicesWarning";
-              var noVoicesWarningDiv = document.getElementById(noVoicesWarningDiv);
-              
-              if(ttsInputDiv.style.display!="block")
-              {
-                  //loadingVoicesDiv.style.display   ="none";
-                  noVoicesWarningDiv.style.display = "block";
-              }
-          }
-          setTimeout(timeoutFunction, TIMEOUT_MILLISECONDS);
-          
-          /*
-          * Here we define a payload function to be executed in the event that the browser
-          * has voices installed.
-          * 
-          * Testing has shown that the window.speechSynthesis.onvoiceschanged event may
-          * be triggered multiple times.  Therfore care should be taken in writing the
-          * payload function.  It will need to be written in a "de-bounce" manner such
-          * that it won't cause any issues if it is executed multiple times.
-          */
-      	var payloadFunction = function(installedVoiceArray)
-          {
-              console.log('Blitz and Chitz!');        
-              console.log(installedVoiceArray);
-              
-              if(installedVoiceArray.length>0)
-              {
-                  //We have voices installed...
-                  //First, hide loading voices notice:
-                  console.log('The browser has voices available!');
-                  
-                  var elementToHideID = "div_LoadingVoices";
-                  var loadingVoicesDiv = document.getElementById(elementToHideID);
-                  
-                  if(loadingVoicesDiv.style.display!="none")
-                  {
-       				loadingVoicesDiv.style.display="none";		
-                  }
-                  
-                  //Second, ensure that the no voices warning is hidden:
-                  elementToHideID = "div_NoVoicesWarning";
-                  var noVoicesWarningDiv = document.getElementById(elementToHideID);
-                  
-                  if(noVoicesWarningDiv.style.display!="none")
-                  {
-       				noVoicesWarningDiv.style.display="none";		
-                  }
-                  
-                  //Third, show our form input controls to the user:
-                  var elementToShowID = "div_ttsInputs";
-                  var ttsInputDiv = document.getElementById(elementToShowID);
-                  
-            		/*
-                  * This function may be triggered multiple times by the browser, so
-                  * make sure to only do things once:
-                  */
-                  if(ttsInputDiv.style.display!="block")
-                  {
-       				ttsInputDiv.style.display="block";
-                      //Use the speech synthesis api to say hi to the user:
-      				SpeechAPI.TextToSpeech.utter("Hi!  When you're ready, type something, and click the \"GO\" BUTTON!");
-                  }
-                  
-              }
-              else
-              {
-              	//No voices installed!
-                  console.log('No voices available!');
-                  /*
-                  * IF the browser does not have any voices available, let the user know:
-                  */
-                  var elementToShowID = "div_NoVoicesWarning";
-                  var noVoicesWarningDiv = document.getElementById(elementToShowID);
-                  if(noVoicesWarningDiv.style.display!="block")
-                  {
-       				noVoicesWarningDiv.style.display="block";
-                  }
-              }     
-          };  
-          
-          //Send the payload function to the API to be exeuted:
-          SpeechAPI.TextToSpeech.executeFunctionIfVoicesInstalled(payloadFunction);
-      }
-      else
-      {
-      	console.log("TTS Not Supported!");
-          var elementToShowID = "div_TTSNotSupportedWarning";
-       	document.getElementById(elementToShowID).style.display="block";
-      }
-    </script>
+
     <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a>
     <br />
     <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">
@@ -180,5 +54,134 @@
     <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
         Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
     </a>.
+
+    <script src='SpeechAPILibrary.js'></script>
+    <script>
+        var elementToHideID = "div_NoJavaScriptWarning";
+        document.getElementById(elementToHideID).style.display="none";
+
+        //Here we detect if speach synthesis is supported by the client browser:
+        if(SpeechAPI.TextToSpeech.isSupported())
+        {
+            //If it's supported we need to update our UI.
+            console.log("TTS Supported!");
+
+            /*
+             * The browser my signal it supports speach synthesis, but may not have any voices to
+             * use.  So, we need to request the list of installed voices from the browser to
+             * determine what to do next.
+             *
+             * Since the request to get the list of installed voices is processed asynchronously,
+             * we cannot garantee order of execution, so we display a loading voices notice:
+             */
+            var elementToShowID = "div_LoadingVoices";
+            var loadingVoicesDiv = document.getElementById(elementToShowID);
+            if(loadingVoicesDiv.style.display!="block")
+            {
+                loadingVoicesDiv.style.display="block";
+            }
+
+            /*
+             * We want to give the browser time to respond to the request before showing the no voices
+             * installed warning:
+             */
+            var TIMEOUT_MILLISECONDS = 2200;
+            var timeoutFunction = function()
+            {
+                var ttsInputsDivID = "div_ttsInputs";
+                var ttsInputDiv = document.getElementById(ttsInputsDivID);
+                var loadingVoicesDivID = "div_LoadingVoices";
+                var loadingVoicesDiv = document.getElementById(loadingVoicesDivID);
+                var noVoicesWarningDiv = "div_NoVoicesWarning";
+                var noVoicesWarningDiv = document.getElementById(noVoicesWarningDiv);
+
+                if(ttsInputDiv.style.display!="block")
+                {
+                    //loadingVoicesDiv.style.display   ="none";
+                    noVoicesWarningDiv.style.display = "block";
+                }
+            }
+            setTimeout(timeoutFunction, TIMEOUT_MILLISECONDS);
+
+            /*
+             * Here we define a payload function to be executed in the event that the browser
+             * has voices installed.
+             *
+             * Testing has shown that the window.speechSynthesis.onvoiceschanged event may
+             * be triggered multiple times.  Therfore care should be taken in writing the
+             * payload function.  It will need to be written in a "de-bounce" manner such
+             * that it won't cause any issues if it is executed multiple times.
+             */
+            var payloadFunction = function(installedVoiceArray)
+            {
+                console.log('Blitz and Chitz!');
+                console.log(installedVoiceArray);
+
+                if(installedVoiceArray.length>0)
+                {
+                    //We have voices installed...
+                    //First, hide loading voices notice:
+                    console.log('The browser has voices available!');
+
+                    var elementToHideID = "div_LoadingVoices";
+                    var loadingVoicesDiv = document.getElementById(elementToHideID);
+
+                    if(loadingVoicesDiv.style.display!="none")
+                    {
+                        loadingVoicesDiv.style.display="none";
+                    }
+
+                    //Second, ensure that the no voices warning is hidden:
+                    elementToHideID = "div_NoVoicesWarning";
+                    var noVoicesWarningDiv = document.getElementById(elementToHideID);
+
+                    if(noVoicesWarningDiv.style.display!="none")
+                    {
+                        noVoicesWarningDiv.style.display="none";
+                    }
+
+                    //Third, show our form input controls to the user:
+                    var elementToShowID = "div_ttsInputs";
+                    var ttsInputDiv = document.getElementById(elementToShowID);
+
+                    /*
+                     * This function may be triggered multiple times by the browser, so
+                     * make sure to only do things once:
+                     */
+                    if(ttsInputDiv.style.display!="block")
+                    {
+                        ttsInputDiv.style.display="block";
+                        //Use the speech synthesis api to say hi to the user:
+                        SpeechAPI.TextToSpeech.utter("Hi!  When you're ready, type something, and click the \"GO\" BUTTON!");
+                    }
+
+                }
+                else
+                {
+                    //No voices installed!
+                    console.log('No voices available!');
+                    /*
+                     * IF the browser does not have any voices available, let the user know:
+                     */
+                    var elementToShowID = "div_NoVoicesWarning";
+                    var noVoicesWarningDiv = document.getElementById(elementToShowID);
+                    if(noVoicesWarningDiv.style.display!="block")
+                    {
+                        noVoicesWarningDiv.style.display="block";
+                    }
+                }
+            };
+
+            //Send the payload function to the API to be exeuted:
+            SpeechAPI.TextToSpeech.executeFunctionIfVoicesInstalled(payloadFunction);
+        }
+        else
+        {
+            console.log("TTS Not Supported!");
+            var elementToShowID = "div_TTSNotSupportedWarning";
+            document.getElementById(elementToShowID).style.display="block";
+        }
+    </script>
+
   </body>
 </html>
