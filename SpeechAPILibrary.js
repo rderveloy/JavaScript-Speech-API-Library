@@ -132,7 +132,7 @@ var SpeechAPI =
                     };
                     recognition.onresult = function(event)
                     {
-                        var sessionInstance = mySingleton.getInstance();
+                        var sessionInstance = SpeechAPI.ContinuousSession().getInstance();
 
                         sessionInstance.resetInterimTranscript();
 
