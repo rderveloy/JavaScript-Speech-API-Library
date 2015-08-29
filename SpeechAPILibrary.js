@@ -213,6 +213,14 @@ var SpeechAPI =
                     getRecognitionObject: function()
                     {
                         return recognition;
+                    },
+                    start: function()
+                    {
+                        recognition.start();
+                    },
+                    stop: function()
+                    {
+                        recognition.stop();
                     }
 
                 };
