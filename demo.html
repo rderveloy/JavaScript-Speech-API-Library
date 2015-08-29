@@ -192,6 +192,17 @@
                 var elementToShowID = "div_TTSNotSupportedWarning";
                 document.getElementById(elementToShowID).style.display="block";
             }
+            if(SpeechAPI.TextToSpeech.isSupported())
+            {
+                var sttInputsDivID = "div_ttsInputs";
+                var sttInputDiv = document.getElementById(ttsInputsDivID);
+
+                if(sttInputDiv.style.display!="block")
+                {
+                    sttInputDiv.style.display = "block";
+                }
+            }
+
         </script>
     </body>
 </html>
