@@ -13,37 +13,47 @@
         <title>JavaScript Speech API Library Demo</title>
     </head>
     <body>
+        <section id="section_NoJSWarning">
+            <div id="div_NoJavaScriptWarning" name="div_NoJavaScriptWarning">
+                <p>
+                    Sorry!  Your browser does not appear to have JavaScript enabled.  Please enable JavaScript in your browser for this site to function correctly.
+                </p>
+                <p>
+                    If your browser is incapable of running JavaScript, please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of compatible browsers.
+                </p>
+            </div>
+        </section>
+        <section id="section_TTS">
 
-        <div id="div_NoJavaScriptWarning" name="div_NoJavaScriptWarning">
-            <p>
-                Sorry!  Your browser does not appear to have JavaScript enabled.  Please enable JavaScript in your browser for this site to function correctly.
-            </p>
-            <p>
-                If your browser is incapable of running JavaScript, please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of compatible browsers.
-            </p>
-        </div>
+            <div id="div_TTSNotSupportedWarning" name="div_TTSNotSupportedWarning" style="display:none;">
+                <p>OOPS!</p>
+                <p>Your browser does not appear to support the Speech Synthesis API.  Please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of capable browsers.</p>
+            </div>
+            <div id="div_LoadingVoices" name="div_LoadingVoices" style="display:none;">
+                <p>Yay!  Your browser had indicated that it supports the Speech Synthesis API!</p>
+                <p>If you're seeing this message, we've asked your browser for a list of available voices and are waiting for a reply.  Please be patient...</p>
+            </div>
+            <div id="div_NoVoicesWarning" name="div_NoVoicesWarning" style="display:none;">
+                <p>OOPS!</p>
+                <p>While your browser is indicating that it supports the Speech Synthesis API, it has not responded to our request in a timely fashion.</p>
+                <p>This could be caused by a number of different reasons.  The most likely of which is that your browser may not officially support the Speech Synthesis API at this time.</p>
+                <p>Please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of capable browsers.</p>
+            </div>
+            <div id="div_ttsInputs" name="div_ttsInputs" style="display:none;">
+                <input id='input_tts' name='input_tts' size='128' value='Son of Jor-El, kneel before Zahd!' /> <!-- I know 'Zahd' should be 'Zod', but speech synthesis often requires phonetic spellings!-->
+                <button onclick="SpeechAPI.TextToSpeech.utter(document.getElementById('input_tts').value);">Go!</button>
+            </div>
 
-        <div id="div_TTSNotSupportedWarning" name="div_TTSNotSupportedWarning" style="display:none;">
-            <p>OOPS!</p>
-            <p>Your browser does not appear to support the Speech Synthesis API.  Please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of capable browsers.</p>
-        </div>
-        <div id="div_LoadingVoices" name="div_LoadingVoices" style="display:none;">
-            <p>Yay!  Your browser had indicated that it supports the Speech Synthesis API!</p>
-            <p>If you're seeing this message, we've asked your browser for a list of available voices and are waiting for a reply.  Please be patient...</p>
-        </div>
-        <div id="div_NoVoicesWarning" name="div_NoVoicesWarning" style="display:none;">
-            <p>OOPS!</p>
-            <p>While your browser is indicating that it supports the Speech Synthesis API, it has not responded to our request in a timely fashion.</p>
-            <p>This could be caused by a number of different reasons.  The most likely of which is that your browser may not officially support the Speech Synthesis API at this time.</p>
-            <p>Please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of capable browsers.</p>
-        </div>
-        <div id="div_ttsInputs" name="div_ttsInputs" style="display:none;">
-            <input id='input_tts' name='input_tts' size='128' value='Son of Jor-El, kneel before Zahd!' /> <!-- I know 'Zahd' should be 'Zod', but speech synthesis often requires phonetic spellings!-->
-            <button onclick="SpeechAPI.TextToSpeech.utter(document.getElementById('input_tts').value);">Go!</button>
-        </div>
-
-        <br/>
-        <br/>
+            <br/>
+            <br/>
+        </section>
+        <section id="section_STT">
+            <div id="div_sttInputs" name="div_sttInputs" style="display:none;">
+                <!--<input id='input_stt' name='input_stt' size='128' value='Son of Jor-El, kneel before Zahd!' /> <!-- I know 'Zahd' should be 'Zod', but speech synthesis often requires phonetic spellings!-->
+                <button onclick="SpeechAPI.SpeechToText.ContinuousSession().getInstance().start();">Start Listening</button>
+                <button onclick="SpeechAPI.TextToSpeech.utter(document.getElementById('input_tts').value);">Stop</button>
+            </div>
+        </section>
         <footer>
             <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a>
             <br />
