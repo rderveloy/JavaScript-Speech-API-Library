@@ -105,53 +105,135 @@ var SpeechAPI =
             }
             return result;
         },
-        ContinousSession: function()
+        ContinuousSession: function ()
         {
-            this.finalTranscript   = '';
-            this.interimTranscript = '';
-            this.recognition       = null;
-            if(SpeechAPI.SpeechToText.isSupported())
+            // Instance stores a reference to the Singleton
+            var instance;
+
+            function init()
             {
-                this.recognition                = new webkitSpeechRecognition();
-                this.recognition.continuous     = true;
-                this.recognition.interimResults = true;
+                // Singleton
+                var finalTranscript   = "";
+                var interimTranscript = "";
+                var recognition;
 
-                this.recognition.onstart = function()
-                {
-                    console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition started.");
-                }
-                this.recognition.onresult = function(event)
-                {
-                    this.interimTranscript = '';
+                var STRING_TYPE  = 'string';
+                var EMPTY_STRING = '';
 
-                    for (var currentIndex=event.ResultIndex; currentIndex < event.results.length; ++currentIndex)
+                if(SpeechAPI.SpeechToText.isSupported())
+                {
+                    recognition                = new webkitSpeechRecognition();
+                    recognition.continuous     = true;
+                    recognition.interimResults = true;
+
+                    recognition.onstart = function()
                     {
-                        if(event.results[currentIndex].isFinal)
-                        {
-                            this.finalTranscript+= event.results[currentIndex][0].transcript;
-                        }
-                        else
-                        {
-                            this.interimTranscript+= event.results[currentIndex][0].transcript;
-                        }
+                        console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition started.");
+                    };
+                    recognition.onresult = function(event)
+                    {
+                        var sessionInstance = mySingleton.getInstance();
 
-                        console.log(this.interimTranscript);
+                        sessionInstance.resetInterimTranscript();
+
+                        for (var currentIndex=event.ResultIndex; currentIndex < event.results.length; ++currentIndex)
+                        {
+                            if(event.results[currentIndex].isFinal)
+                            {
+                                sessionInstance.appendToFinalTranscript(event.results[currentIndex][0].transcript);
+                            }
+                            else
+                            {
+                                sessionInstance.appendToInterimTranscript(event.results[currentIndex][0].transcript);
+                            }
+
+                            console.log(sessionInstance.getInterimTranscript());
+                        }
+                    };
+                    recognition.onerror = function(event)
+                    {
+                        console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition error!");
+                        console.log(event);
+                    };
+                    recognition.onend = function()
+                    {
+                        console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition ended.");
+                    };
+                }
+                else
+                {
+                    console.log("ERROR: Speech recognition is not supported by this browser!");
+                }
+
+                //Public stuff here:
+                return {
+                    // Public methods and variables
+                    getFinalTranscript: function ()
+                    {
+                        return finalTranscript;
+                    },
+                    resetFinalTranscript: function ()
+                    {
+                        finalTranscript="";
+                    },
+                    appendToFinalTranscript: function (desiredValue)
+                    {
+                        if(desiredValue)
+                        {
+                            if(typeof desiredValue == STRING_TYPE)
+                            {
+                                if(desiredValue != EMPTY_STRING)
+                                {
+                                    finalTranscript+=desiredValue;
+                                }
+                            }
+                        }
+                    },
+                    getInterimTranscript: function ()
+                    {
+                        return interimTranscript;
+                    },
+                    resetInterimTranscript: function ()
+                    {
+                        interimTranscript="";
+                    },
+                    appendToInterimTranscript: function (desiredValue)
+                    {
+                        if(desiredValue)
+                        {
+                            if(typeof desiredValue == STRING_TYPE)
+                            {
+                                if(desiredValue != EMPTY_STRING)
+                                {
+                                    interimTranscript+=desiredValue;
+                                }
+                            }
+                        }
+                    },
+                    getRecognitionObject: function()
+                    {
+                        return recognition;
                     }
-                }
-                this.recognition.onerror = function(event)
+
+                };
+
+            };
+
+            return{
+                // Get the Singleton instance if one exists
+                // or create one if it doesn't
+                getInstance: function ()
                 {
-                    console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition error!");
-                    console.log(event);
+                    if ( !instance )
+                    {
+                        instance = init();
+                    }
+                    return instance;
                 }
-                this.recognition.onend     = function()
-                {
-                    console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition ended.");
-                }
-            }
-            else
-            {
-                console.log("ERROR: Speech recognition is not supported by this browser!");
-            }
+
+            };
+
         }
+
     }
 };
