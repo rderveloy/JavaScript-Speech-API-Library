@@ -104,6 +104,54 @@ var SpeechAPI =
                 console.log(err);
             }
             return result;
+        },
+        ContinousSession: function()
+        {
+            this.finalTranscript   = '';
+            this.interimTranscript = '';
+            this.recognition       = null;
+            if(SpeechAPI.SpeechToText.isSupported())
+            {
+                this.recognition                = new webkitSpeechRecognition();
+                this.recognition.continuous     = true;
+                this.recognition.interimResults = true;
+
+                this.recognition.onstart = function()
+                {
+                    console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition started.");
+                }
+                this.recognition.onresult = function(event)
+                {
+                    this.interimTranscript = '';
+
+                    for (var currentIndex=event.ResultIndex; currentIndex < event.results.length; ++currentIndex)
+                    {
+                        if(event.results[currentIndex].isFinal)
+                        {
+                            this.finalTranscript+= event.results[currentIndex][0].transcript;
+                        }
+                        else
+                        {
+                            this.interimTranscript+= event.results[currentIndex][0].transcript;
+                        }
+
+                        console.log(this.interimTranscript);
+                    }
+                }
+                this.recognition.onerror = function(event)
+                {
+                    console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition error!");
+                    console.log(event);
+                }
+                this.recognition.onend     = function()
+                {
+                    console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition ended.");
+                }
+            }
+            else
+            {
+                console.log("ERROR: Speech recognition is not supported by this browser!");
+            }
         }
     }
 };
