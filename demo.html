@@ -39,7 +39,7 @@
         </div>
         <div id="div_ttsInputs" name="div_ttsInputs" style="display:none;">
             <input id='input_tts' name='input_tts' size='128' value='Son of Jor-El, kneel before Zahd!' /> <!-- I know 'Zahd' should be 'Zod', but speech synthesis often requires phonetic spellings!-->
-            <button onclick="browserTTSUtterance.utter(document.getElementById('input_tts').value);">Go!</button>
+            <button onclick="SpeechAPI.TextToSpeech.utter(document.getElementById('input_tts').value);">Go!</button>
         </div>
 
         <br/>
