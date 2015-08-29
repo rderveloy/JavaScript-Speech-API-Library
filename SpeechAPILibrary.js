@@ -107,30 +107,3 @@ var SpeechAPI =
         }
     }
 };
-
-var browserTTSUtterance = 
-{
-    utter: function(text)
-    {
-        var STRING_TYPE  = 'string';
-        var EMPTY_STRING = '';
-        if(text)
-        {
-            if(typeof text == STRING_TYPE)
-            {
-                if(text != EMPTY_STRING)
-                {
-                    if(SpeechAPI.TextToSpeech.isSupported())
-                    {
-                        var msg = new SpeechSynthesisUtterance(text);            
-                        speechSynthesis.speak(msg);            
-                    }
-                    else
-                    {
-                        console.log("ERROR: TTS is not supported by this browser!");
-                    }
-                }
-            }
-        }
-    }
-};
