@@ -76,10 +76,10 @@
     function ContinuousSession()
     {
         //Private variables:
-        var _CLASS_NAME        = "ContinuousSession";
-        var _startRequested    = false;
-        var _stopRequested     = false;
-        var _recognition       = null;
+        var _CLASS_NAME                = "ContinuousSession";
+        var _startRequested            = false;
+        var _stopRequested             = false;
+        var _recognition               = null;
 
         if(SpeechAPI.SpeechToText.isSupported())
         {
@@ -228,6 +228,7 @@
 
     var interimTranscript = "";
     var finalTranscript   = "";
+    var IGNORE_SPOKEN_PUNCTUATION_COMMANDS = true;
     var test = new ContinuousSession();
 
 
@@ -261,16 +262,24 @@
             var currentRecognitionResult             = event.results[currentIndex];
             var currentRecognitionResultAlternative  = currentRecognitionResult[0];
 
+            var transcriptToExamine = currentRecognitionResultAlternative.transcript;
+
+            if(IGNORE_SPOKEN_PUNCTUATION_COMMANDS)
+            {
+                transcriptToExamine.replace('.',' period');
+                transcriptToExamine.replace(',', ' comma');
+                transcriptToExamine.replace(':', ' colon');
+                transcriptToExamine.replace('\n', ' new paragraph');
+            }
+
             if(currentRecognitionResult.isFinal)
             {
-                finalTranscript+=currentRecognitionResultAlternative.transcript;
+                finalTranscript+=transcriptToExamine;
             }
             else
             {
-                interimTranscript+=currentRecognitionResultAlternative.transcript;
+                interimTranscript+=transcriptToExamine;
             }
-
-
         }
         console.log("Interim: "+interimTranscript);
         console.log("Final:   "+finalTranscript);
