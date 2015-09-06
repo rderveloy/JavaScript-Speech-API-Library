@@ -59,8 +59,6 @@
     {
         //If it's supported we need to update our UI.
         console.log("STT Supported!");
-
-
         var elementToShowID = "div_sttInputs";
         document.getElementById(elementToShowID).style.display="block";
     }
@@ -172,6 +170,7 @@
             else
             {
                 var logMessage = LOG_PREFIX+"ERROR: Recognition object was null!";
+                console.log(logMessage);
             }
         };
 
@@ -250,27 +249,32 @@
 
     function recognitionStartClickEventHandler()
     {
+        console.log("recognitionStartClickEventHandler(): Entering function.");
         var elementToHideID = "button_sttStart";
-        var elementToShowID = "button_sttStop"
+        var elementToShowID = "button_sttStop";
 
-        console.log("recognitionStartClickEventHandler(): Requesting recognition start.")
         test.start();
+
         document.getElementById(elementToHideID).style.display="none";
         document.getElementById(elementToShowID).style.display="block";
+
+        console.log("recognitionStartClickEventHandler(): Leaving function.");
     }
 
     function recognitionStopClickEventHandler()
     {
+        console.log("recognitionStopClickEventHandler(): Entering function.");
+
         var elementToHideID = "button_sttStop";
-        var elementToShowID = "button_sttStart"
+        var elementToShowID = "button_sttStart";
 
         document.getElementById(elementToHideID).style.display="none";
-        console.log("recognitionStartClickEventHandler(): Requesting recognition stop.")
+
         test.stop();
 
-
-        console.log(SpeechAPI.SpeechToText.ContinuousSession().getInstance().getFinalTranscript());
         document.getElementById(elementToShowID).style.display="block";
+
+        console.log("recognitionStopClickEventHandler(): Leaving function.");
     }
 
 </script>
