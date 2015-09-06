@@ -47,13 +47,6 @@
             <br/>
             <br/>
         </section>
-        <section id="section_STT">
-            <div id="div_sttInputs" name="div_sttInputs" style="display:none;">
-                <!--<input id='input_stt' name='input_stt' size='128' value='Son of Jor-El, kneel before Zahd!' /> <!-- I know 'Zahd' should be 'Zod', but speech synthesis often requires phonetic spellings!-->
-                <button id='button_ttsStart' onclick="recognitionStartClickEventHandler();">Start Recognition</button>
-                <button id='button_ttsStop' onclick="recognitionStopClickEventHandler();" style="display:none;">Stop Recognition</button>
-            </div>
-        </section>
         <footer>
             <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a>
             <br />
@@ -70,34 +63,6 @@
             </a>.
         </footer>
         <script src='SpeechAPILibrary.js'></script>
-        <script>
-            function recognitionStartClickEventHandler()
-            {
-                var elementToHideID = "button_ttsStart";
-                var elementToShowID = "button_ttsStop"
-
-                console.log("recognitionStartClickEventHandler(): Requesting recognition start.")
-                SpeechAPI.SpeechToText.ContinuousSession().getInstance().start();
-                document.getElementById(elementToHideID).style.display="none";
-                document.getElementById(elementToShowID).style.display="block";
-            }
-
-            function recognitionStopClickEventHandler()
-            {
-                var elementToHideID = "button_ttsStop";
-                var elementToShowID = "button_ttsStart"
-
-                document.getElementById(elementToHideID).style.display="none";
-                console.log("recognitionStartClickEventHandler(): Requesting recognition stop.")
-                SpeechAPI.SpeechToText.ContinuousSession().getInstance().stop();
-
-
-                console.log(SpeechAPI.SpeechToText.ContinuousSession().getInstance().getFinalTranscript());
-                document.getElementById(elementToShowID).style.display="block";
-
-            }
-
-        </script>
         <script>
             var elementToHideID = "div_NoJavaScriptWarning";
             document.getElementById(elementToHideID).style.display="none";
@@ -219,16 +184,6 @@
                 console.log("TTS Not Supported!");
                 var elementToShowID = "div_TTSNotSupportedWarning";
                 document.getElementById(elementToShowID).style.display="block";
-            }
-            if(SpeechAPI.TextToSpeech.isSupported())
-            {
-                var sttInputsDivID = "div_sttInputs";
-                var sttInputDiv = document.getElementById(sttInputsDivID);
-
-                if(sttInputDiv.style.display!="block")
-                {
-                    sttInputDiv.style.display = "block";
-                }
             }
 
         </script>
