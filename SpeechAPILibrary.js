@@ -141,19 +141,19 @@ var SpeechAPI =
                         var resultIndex       = event.resultIndex;
                         var resultArrayLength = event.results.length;
 
-
                         for (var currentIndex=resultIndex; currentIndex < resultArrayLength; ++currentIndex)
                         {
-                            var currentRecognitionResult           = event.results[currentIndex][0];
-                            var currentRecognitionResultTranscript = currentRecognitionResult.transcript;
+                            var currentRecognitionResult                       = event.results[currentIndex];
+                            var currentRecognitionResultAlternative            = currentRecognitionResult[0];
+                            var currentRecognitionResultAlternativeTranscript  = currentRecognitionResult.transcript;
 
-                            if(currentRecognitionResult.isFinal)
+                            if(currentRecognitionResultAlternative.isFinal)
                             {
-                                sessionInstance.appendToFinalTranscript(currentRecognitionResultTranscript);
+                                sessionInstance.appendToFinalTranscript(currentRecognitionResultAlternativeTranscript);
                             }
                             else
                             {
-                                sessionInstance.appendToInterimTranscript(currentRecognitionResultTranscript);
+                                sessionInstance.appendToInterimTranscript(currentRecognitionResultAlternativeTranscript);
                             }
 
 
