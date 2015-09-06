@@ -225,9 +225,10 @@
 </script>
 <script>
 
+    var interimTranscript = "";
+    var finalTranscript   = "";
     var test = new ContinuousSession();
 
-    var test = new ContinuousSession();
 
     test.setEventHandler_onend(function onEndEventHandler(event){
         console.log("Recognition ended.");
@@ -237,12 +238,13 @@
         console.log("Recognition started.");
     });
 
-    test.setEventHandler_onresult(function onResultEventHandler(event){
+    test.setEventHandler_onerror(function onErrorEventHandler(event){
+        console.log("Recognition error!");
         console.log(event);
     });
 
-    test.setEventHandler_onerror(function onErrorEventHandler(event){
-        console.log("Recognition error!");
+    test.setEventHandler_onresult(function onResultEventHandler(event){
+        console.log("Recognition result!");
         console.log(event);
     });
 
@@ -252,7 +254,7 @@
         var elementToShowID = "button_sttStop"
 
         console.log("recognitionStartClickEventHandler(): Requesting recognition start.")
-        SpeechAPI.SpeechToText.ContinuousSession().getInstance().start();
+        test.start();
         document.getElementById(elementToHideID).style.display="none";
         document.getElementById(elementToShowID).style.display="block";
     }
@@ -264,7 +266,7 @@
 
         document.getElementById(elementToHideID).style.display="none";
         console.log("recognitionStartClickEventHandler(): Requesting recognition stop.")
-        SpeechAPI.SpeechToText.ContinuousSession().getInstance().stop();
+        test.stop();
 
 
         console.log(SpeechAPI.SpeechToText.ContinuousSession().getInstance().getFinalTranscript());
