@@ -149,22 +149,17 @@ var SpeechAPI =
 
                             if(currentRecognitionResult.isFinal)
                             {
-                                console.log("SpeechAPI->SpeechToText->ContinousSession->recognition->onresult(): Appending to final transcript.");
                                 sessionInstance.appendToFinalTranscript(currentRecognitionResultTranscript);
                             }
                             else
                             {
-                                console.log("SpeechAPI->SpeechToText->ContinousSession->recognition->onresult(): Appending to interim transcript.");
                                 sessionInstance.appendToInterimTranscript(currentRecognitionResultTranscript);
-
                             }
 
-                            console.log(sessionInstance.getInterimTranscript());
+
                         }
-
-                        console.log(sessionInstance.getInterimTranscript());
-
-
+                        console.log("Interim: "+sessionInstance.getInterimTranscript());
+                        console.log("Final:   "+sessionInstance.getFinalTranscript());
 
                     };
                     recognition.onerror = function defaultRecognitionEventHandler_onerror(event)
@@ -196,6 +191,7 @@ var SpeechAPI =
                     },
                     appendToFinalTranscript: function (desiredValue)
                     {
+                        console.log("SpeechAPI->SpeechToText->ContinousSession->appendToFinalTranscript()");
                         if(desiredValue)
                         {
                             if(typeof desiredValue == STRING_TYPE)
