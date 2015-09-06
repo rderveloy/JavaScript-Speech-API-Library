@@ -226,6 +226,10 @@
 </script>
 <script>
 
+    //TODO: Continue session when ended without request or error.
+    //TODO: Appropriately hide/show buttons in onstart and onend event handlers.
+    //TODO: Reset final transcript when user ends session.
+
     var interimTranscript = "";
     var finalTranscript   = "";
     var IGNORE_SPOKEN_PUNCTUATION_COMMANDS = true;
@@ -261,26 +265,32 @@
         {
             var currentRecognitionResult             = event.results[currentIndex];
             var currentRecognitionResultAlternative  = currentRecognitionResult[0];
-
-            var transcriptToExamine = currentRecognitionResultAlternative.transcript;
-
-            var transcriptToAppend = transcriptToExamine;
+            var transcriptToAppend                   = currentRecognitionResultAlternative.transcript;
 
             if(IGNORE_SPOKEN_PUNCTUATION_COMMANDS)
             {
-                transcriptToAppend = transcriptToAppend.replace('.',' period');
-                transcriptToAppend = transcriptToAppend.replace(',', ' comma');
-                transcriptToAppend = transcriptToAppend.replace(':', ' colon');
-                transcriptToAppend = transcriptToAppend.replace('\n\n', ' new paragraph');
+                var PERIOD_SEARCH     = '.';
+                var PERIOD_REPLACE    = ' period';
+                var COMMA_SEARCH      = ',';
+                var COMMA_REPLACE     = ' comma';
+                var COLON_SEARCH      = ':';
+                var COLON_REPLACE     = ' colon';
+                var PARAGRAPH_SEARCH  = '\n\n';
+                var PARAGRAPH_REPLACE = ' new paragraph ';
+
+                transcriptToAppend = transcriptToAppend.replace(PERIOD_SEARCH,    PERIOD_REPLACE);
+                transcriptToAppend = transcriptToAppend.replace(COMMA_SEARCH,     COMMA_REPLACE);
+                transcriptToAppend = transcriptToAppend.replace(COLON_SEARCH,     COLON_REPLACE);
+                transcriptToAppend = transcriptToAppend.replace(PARAGRAPH_SEARCH, PARAGRAPH_REPLACE);
             }
 
             if(currentRecognitionResult.isFinal)
             {
-                finalTranscript+=transcriptToAppend;
+                finalTranscript += transcriptToAppend;
             }
             else
             {
-                interimTranscript+=transcriptToAppend;
+                interimTranscript += transcriptToAppend;
             }
         }
         console.log("Interim: "+interimTranscript);
