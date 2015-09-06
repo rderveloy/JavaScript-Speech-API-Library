@@ -145,7 +145,9 @@ var SpeechAPI =
                         {
                             var currentRecognitionResult                       = event.results[currentIndex];
                             var currentRecognitionResultAlternative            = currentRecognitionResult[0];
-                            var currentRecognitionResultAlternativeTranscript  = currentRecognitionResult.transcript;
+                            var currentRecognitionResultAlternativeTranscript  = currentRecognitionResultAlternative.transcript;
+
+                            console.log(currentRecognitionResult.isFinal);
 
                             if(currentRecognitionResultAlternative.isFinal)
                             {
