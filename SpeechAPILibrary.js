@@ -132,6 +132,7 @@ var SpeechAPI =
                     };
                     recognition.onresult = function(event)
                     {
+                        console.log("SpeechAPI->SpeechToText->ContinousSession->recognition->onresult(): Entering function.");
                         var sessionInstance = SpeechAPI.SpeechToText.ContinuousSession().getInstance();
 
                         sessionInstance.resetInterimTranscript();
@@ -149,6 +150,7 @@ var SpeechAPI =
 
                             console.log(sessionInstance.getInterimTranscript());
                         }
+                        console.log("SpeechAPI->SpeechToText->ContinousSession->recognition->onresult(): Leaving function.");
                     };
                     recognition.onerror = function(event)
                     {
@@ -175,6 +177,7 @@ var SpeechAPI =
                     resetFinalTranscript: function ()
                     {
                         finalTranscript="";
+                        console.log("SpeechAPI->SpeechToText->ContinousSession->resetInterimTranscript(): Final transcript reset.");
                     },
                     appendToFinalTranscript: function (desiredValue)
                     {
@@ -196,6 +199,7 @@ var SpeechAPI =
                     resetInterimTranscript: function ()
                     {
                         interimTranscript="";
+                        console.log("SpeechAPI->SpeechToText->ContinousSession->resetInterimTranscript(): Interim transcript reset.");
                     },
                     appendToInterimTranscript: function (desiredValue)
                     {
@@ -217,10 +221,13 @@ var SpeechAPI =
                     start: function()
                     {
                         recognition.start();
+                        console.log("SpeechAPI->SpeechToText->ContinousSession->start(): Starting session.");
                     },
                     stop: function()
                     {
+
                         recognition.stop();
+                        console.log("SpeechAPI->SpeechToText->ContinousSession->start(): Stopping session.");
                     }
 
                 };
