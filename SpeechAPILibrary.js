@@ -266,7 +266,7 @@ var SpeechAPI =
                         startRequested = true;
                         stopRequested  = false;
                         recognition.start();
-                        console.log("SpeechAPI->SpeechToText->ContinuousSession->start(): Starting session.");
+                        console.log("SpeechAPI.SpeechToText.ContinuousSession.getInstance().start(): Starting session.");
                     },
                     getStopRequestedFlag: function()
                     {
@@ -277,7 +277,7 @@ var SpeechAPI =
                         stopRequested  = true;
                         startRequested = false;
                         recognition.stop();
-                        console.log("SpeechAPI->SpeechToText->ContinuousSession->stop(): Stopping session.");
+                        console.log("SpeechAPI.SpeechToText.ContinuousSession.getInstance().stop(): Stopping session.");
                     },
 
 
