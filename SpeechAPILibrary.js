@@ -149,7 +149,7 @@ var SpeechAPI =
 
                             console.log(currentRecognitionResult.isFinal);
 
-                            if(currentRecognitionResultAlternative.isFinal)
+                            if(currentRecognitionResult.isFinal)
                             {
                                 sessionInstance.appendToFinalTranscript(currentRecognitionResultAlternativeTranscript);
                             }
