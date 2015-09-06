@@ -24,11 +24,11 @@ var SpeechAPI =
                     result = true;
                 }    
             }
-            catch(err)
+            catch(caughtException)
             {
-                var message = "SpeechAPI->SpeechSynthesis->isSupported(): Exception encountered while performing speech synthesis detection.";
+                var message = "SpeechAPI.SpeechSynthesis.isSupported(): Exception encountered while performing speech synthesis detection.";
                 console.log(message);
-                console.log(err);
+                console.log(caughtException);
             }
 
             return result;
@@ -97,11 +97,11 @@ var SpeechAPI =
                     result = true;
                 }
             }
-            catch(err)
+            catch(caughtException)
             {
-                var message = "SpeechAPI->SpeechToText->isSupported(): Exception encountered while performing speech recognition detection.";
+                var message = "SpeechAPI.SpeechToText.isSupported(): Exception encountered while performing speech recognition detection.";
                 console.log(message);
-                console.log(err);
+                console.log(caughtException);
             }
             return result;
         },
