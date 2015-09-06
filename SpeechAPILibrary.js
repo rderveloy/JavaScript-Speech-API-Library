@@ -136,6 +136,8 @@ var SpeechAPI =
 
                         sessionInstance.resetInterimTranscript();
 
+                        console.log(event);
+
                         for (var currentIndex=event.ResultIndex; currentIndex < event.results.length; ++currentIndex)
                         {
                             if(event.results[currentIndex].isFinal)
@@ -183,7 +185,7 @@ var SpeechAPI =
                     resetFinalTranscript: function ()
                     {
                         finalTranscript="";
-                        console.log("SpeechAPI->SpeechToText->ContinousSession->resetInterimTranscript(): Final transcript reset.");
+                        //console.log("SpeechAPI->SpeechToText->ContinousSession->resetInterimTranscript(): Final transcript reset.");
                     },
                     appendToFinalTranscript: function (desiredValue)
                     {
@@ -205,7 +207,7 @@ var SpeechAPI =
                     resetInterimTranscript: function ()
                     {
                         interimTranscript="";
-                        console.log("SpeechAPI->SpeechToText->ContinousSession->resetInterimTranscript(): Interim transcript reset.");
+                        //console.log("SpeechAPI->SpeechToText->ContinousSession->resetInterimTranscript(): Interim transcript reset.");
                     },
                     appendToInterimTranscript: function (desiredValue)
                     {
