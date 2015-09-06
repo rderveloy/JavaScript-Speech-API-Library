@@ -108,7 +108,7 @@ var SpeechAPI =
         ContinuousSession: function ()
         {
             // Instance stores a reference to the Singleton
-            var instance;
+            var instance = null;
 
 
             function init()
@@ -116,9 +116,9 @@ var SpeechAPI =
                 // Singleton
                 var finalTranscript   = "";
                 var interimTranscript = "";
-                this.startRequested    = false;
-                this.stopRequested     = false;
-                var recognition;
+                var startRequested   = false;
+                var stopRequested    = false;
+                var recognition       = null;
 
                 var STRING_TYPE  = 'string';
                 var EMPTY_STRING = '';
@@ -131,17 +131,20 @@ var SpeechAPI =
 
                     recognition.onstart = function defaultRecognitionEventHandler_onstart()
                     {
-                        console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Recognition started.");
-                        if(!SpeechAPI.SpeechToText.ContinuousSession().getInstance().startRequested)
-                        {
-                            console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Recognition started, but was not requested.");
-                            console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Stopping recognition...");
-                            SpeechAPI.SpeechToText.ContinuousSession().getInstance().stop();
-                        }
-                        else
-                        {
-                            console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition started by request.");
-                        }
+                        //console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Recognition started.");
+                        //if(!SpeechAPI.SpeechToText.ContinuousSession().getInstance().startRequested)
+                        //{
+                        //    console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Recognition started, but was not requested.");
+                        //    console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Stopping recognition...");
+                        //    SpeechAPI.SpeechToText.ContinuousSession().getInstance().stop();
+                        //}
+                        //else
+                        //{
+                        //    console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition started by request.");
+                        //}
+
+                        console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Recognition started");
+                        console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Start Requested: "+SpeechAPI.SpeechToText.ContinousSession().getInstance().getStartRequestedFlag());
 
                     };
                     recognition.onend = function defaultRecognitionEventHandler_onend()
@@ -156,6 +159,8 @@ var SpeechAPI =
                         {
                             console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition ended by request.");
                         }
+                        console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Recognition ended.");
+                        console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Stop Requested: "+SpeechAPI.SpeechToText.ContinousSession().getInstance().getStopRequestedFlag());
                     };
                     recognition.onresult = function defaultRecognitionEventHandler_onresult(event)
                     {
@@ -252,20 +257,29 @@ var SpeechAPI =
                     {
                         return recognition;
                     },
+                    getStartRequestedFlag: function()
+                    {
+                        return startRequested;
+                    },
                     start: function()
                     {
-                        this.startRequested = true;
-                        this.stopRequested  = false;
+                        startRequested = true;
+                        stopRequested  = false;
                         recognition.start();
                         console.log("SpeechAPI->SpeechToText->ContinousSession->start(): Starting session.");
                     },
+                    getStopRequestedFlag: function()
+                    {
+                        return stopRequested;
+                    },
                     stop: function()
                     {
-                        this.stopRequested  = true;
-                        this.startRequested = false;
+                        stopRequested  = true;
+                        startRequested = false;
                         recognition.stop();
                         console.log("SpeechAPI->SpeechToText->ContinousSession->start(): Stopping session.");
-                    }
+                    },
+
 
                 };
 
