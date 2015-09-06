@@ -132,7 +132,6 @@ var SpeechAPI =
                     };
                     recognition.onresult = function defaultRecognitionEventHandler_onresult(event)
                     {
-                        console.log("SpeechAPI->SpeechToText->ContinousSession->recognition->onresult(): Entering function.");
                         var sessionInstance = SpeechAPI.SpeechToText.ContinuousSession().getInstance();
 
                         sessionInstance.resetInterimTranscript();
@@ -141,16 +140,23 @@ var SpeechAPI =
                         {
                             if(event.results[currentIndex].isFinal)
                             {
+                                console.log("SpeechAPI->SpeechToText->ContinousSession->recognition->onresult(): Appending to final transcript.");
                                 sessionInstance.appendToFinalTranscript(event.results[currentIndex][0].transcript);
                             }
                             else
                             {
+                                console.log("SpeechAPI->SpeechToText->ContinousSession->recognition->onresult(): Appending to interim transcript.");
                                 sessionInstance.appendToInterimTranscript(event.results[currentIndex][0].transcript);
+
                             }
 
                             console.log(sessionInstance.getInterimTranscript());
                         }
-                        console.log("SpeechAPI->SpeechToText->ContinousSession->recognition->onresult(): Leaving function.");
+
+                        console.log(sessionInstance.getInterimTranscript());
+
+
+
                     };
                     recognition.onerror = function defaultRecognitionEventHandler_onerror(event)
                     {
