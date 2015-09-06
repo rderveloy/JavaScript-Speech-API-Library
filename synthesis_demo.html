@@ -23,9 +23,9 @@
                 </p>
             </div>
         </section>
-        <section id="section_TTS">
+        <section id="section_SpeechSynthesis">
 
-            <div id="div_TTSNotSupportedWarning" name="div_TTSNotSupportedWarning" style="display:none;">
+            <div id="div_SpeechSynthesisNotSupportedWarning" name="div_SpeechSynthesisNotSupportedWarning" style="display:none;">
                 <p>OOPS!</p>
                 <p>Your browser does not appear to support the Speech Synthesis API.  Please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of capable browsers.</p>
             </div>
@@ -39,9 +39,9 @@
                 <p>This could be caused by a number of different reasons.  The most likely of which is that your browser may not officially support the Speech Synthesis API at this time.</p>
                 <p>Please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of capable browsers.</p>
             </div>
-            <div id="div_ttsInputs" name="div_ttsInputs" style="display:none;">
-                <input id='input_tts' name='input_tts' size='128' value='Son of Jor-El, kneel before Zahd!' /> <!-- I know 'Zahd' should be 'Zod', but speech synthesis often requires phonetic spellings!-->
-                <button onclick="SpeechAPI.SpeechSynthesis.utter(document.getElementById('input_tts').value);">Go!</button>
+            <div id="div_speechSynthesisInputs" name="div_speechSynthesisInputs" style="display:none;">
+                <input id='input_speechSynthesis' name='input_speechSynthesis' size='128' value='Son of Jor-El, kneel before Zahd!' /> <!-- I know 'Zahd' should be 'Zod', but speech synthesis often requires phonetic spellings!-->
+                <button onclick="SpeechAPI.SpeechSynthesis.utter(document.getElementById('input_speechSynthesis').value);">Go!</button>
             </div>
 
             <br/>
@@ -71,7 +71,7 @@
             if(SpeechAPI.SpeechSynthesis.isSupported())
             {
                 //If it's supported we need to update our UI.
-                console.log("TTS Supported!");
+                console.log("Speech Synthesis Supported!");
 
                 /*
                  * The browser my signal it supports speech synthesis, but may not have any voices to
@@ -95,12 +95,12 @@
                 var TIMEOUT_MILLISECONDS = 2200;
                 var timeoutFunction = function()
                 {
-                    var ttsInputsDivID = "div_ttsInputs";
-                    var ttsInputDiv = document.getElementById(ttsInputsDivID);
+                    var speechSynthesisInputsDivID = "div_speechSynthesisInputs";
+                    var speechSynthesisInputDiv = document.getElementById(speechSynthesisInputsDivID);
                     var noVoicesWarningDiv = "div_NoVoicesWarning";
                     var noVoicesWarningDiv = document.getElementById(noVoicesWarningDiv);
 
-                    if(ttsInputDiv.style.display!="block")
+                    if(speechSynthesisInputDiv.style.display!="block")
                     {
                         noVoicesWarningDiv.style.display = "block";
                     }
@@ -145,16 +145,16 @@
                         }
 
                         //Third, show our form input controls to the user:
-                        var elementToShowID = "div_ttsInputs";
-                        var ttsInputDiv = document.getElementById(elementToShowID);
+                        var elementToShowID = "div_speechSynthesisInputs";
+                        var speechSynthesisInputDiv = document.getElementById(elementToShowID);
 
                         /*
                          * This function may be triggered multiple times by the browser, so
                          * make sure to only do things once:
                          */
-                        if(ttsInputDiv.style.display!="block")
+                        if(speechSynthesisInputDiv.style.display!="block")
                         {
-                            ttsInputDiv.style.display="block";
+                            speechSynthesisInputDiv.style.display="block";
                             //Use the speech synthesis api to say hi to the user:
                             SpeechAPI.SpeechSynthesis.utter("Hi!  When you're ready, type something, and click the \"GO\" BUTTON!");
                         }
@@ -181,8 +181,8 @@
             }
             else
             {
-                console.log("TTS Not Supported!");
-                var elementToShowID = "div_TTSNotSupportedWarning";
+                console.log("Speech Synthesis Not Supported!");
+                var elementToShowID = "div_SpeechSynthesisNotSupportedWarning";
                 document.getElementById(elementToShowID).style.display="block";
             }
 
