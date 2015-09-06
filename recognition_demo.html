@@ -264,21 +264,23 @@
 
             var transcriptToExamine = currentRecognitionResultAlternative.transcript;
 
+            var transcriptToAppend = transcriptToExamine;
+
             if(IGNORE_SPOKEN_PUNCTUATION_COMMANDS)
             {
-                transcriptToExamine.replace('.',' period');
-                transcriptToExamine.replace(',', ' comma');
-                transcriptToExamine.replace(':', ' colon');
-                transcriptToExamine.replace('\n', ' new paragraph');
+                transcriptToAppend = transcriptToAppend.replace('.',' period');
+                transcriptToAppend = transcriptToAppend.replace(',', ' comma');
+                transcriptToAppend = transcriptToAppend.replace(':', ' colon');
+                transcriptToAppend = transcriptToAppend.replace('\n', ' new paragraph');
             }
 
             if(currentRecognitionResult.isFinal)
             {
-                finalTranscript+=transcriptToExamine;
+                finalTranscript+=transcriptToAppend;
             }
             else
             {
-                interimTranscript+=transcriptToExamine;
+                interimTranscript+=transcriptToAppend;
             }
         }
         console.log("Interim: "+interimTranscript);
