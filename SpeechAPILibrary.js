@@ -147,15 +147,15 @@ var SpeechAPI =
                             var currentRecognitionResult           = event.results[currentIndex][0];
                             var currentRecognitionResultTranscript = currentRecognitionResult.transcript;
 
-                            if(recognitionResult.isFinal)
+                            if(currentRecognitionResult.isFinal)
                             {
                                 console.log("SpeechAPI->SpeechToText->ContinousSession->recognition->onresult(): Appending to final transcript.");
-                                sessionInstance.appendToFinalTranscript(recognitionResult.transcript);
+                                sessionInstance.appendToFinalTranscript(currentRecognitionResultTranscript);
                             }
                             else
                             {
                                 console.log("SpeechAPI->SpeechToText->ContinousSession->recognition->onresult(): Appending to interim transcript.");
-                                sessionInstance.appendToInterimTranscript(recognitionResulttranscript);
+                                sessionInstance.appendToInterimTranscript(currentRecognitionResultTranscript);
 
                             }
 
