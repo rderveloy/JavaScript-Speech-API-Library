@@ -126,11 +126,11 @@ var SpeechAPI =
                     recognition.continuous     = true;
                     recognition.interimResults = true;
 
-                    recognition.onstart = function()
+                    recognition.onstart = function defaultRecognitionEventHandler_onstart()
                     {
                         console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition started.");
                     };
-                    recognition.onresult = function(event)
+                    recognition.onresult = function defaultRecognitionEventHandler_onresult(event)
                     {
                         console.log("SpeechAPI->SpeechToText->ContinousSession->recognition->onresult(): Entering function.");
                         var sessionInstance = SpeechAPI.SpeechToText.ContinuousSession().getInstance();
@@ -152,12 +152,12 @@ var SpeechAPI =
                         }
                         console.log("SpeechAPI->SpeechToText->ContinousSession->recognition->onresult(): Leaving function.");
                     };
-                    recognition.onerror = function(event)
+                    recognition.onerror = function defaultRecognitionEventHandler_onerror(event)
                     {
                         console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition error!");
                         console.log(event);
                     };
-                    recognition.onend = function()
+                    recognition.onend = function defaultRecognitionEventHandler_onend()
                     {
                         console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition ended.");
                     };

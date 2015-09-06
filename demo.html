@@ -50,8 +50,8 @@
         <section id="section_STT">
             <div id="div_sttInputs" name="div_sttInputs" style="display:none;">
                 <!--<input id='input_stt' name='input_stt' size='128' value='Son of Jor-El, kneel before Zahd!' /> <!-- I know 'Zahd' should be 'Zod', but speech synthesis often requires phonetic spellings!-->
-                <button onclick="SpeechAPI.SpeechToText.ContinuousSession().getInstance().start();">Start Listening</button>
-                <button onclick="SpeechAPI.SpeechToText.ContinuousSession().getInstance().stop();">Stop</button>
+                <button id='button_ttsStart' onclick="recognitionStartClickEventHandler();">Start Recognition</button>
+                <button id='button_ttsStop' onclick="recognitionStopClickEventHandler();" style="display:none;">Stop Recognition</button>
             </div>
         </section>
         <footer>
@@ -70,6 +70,34 @@
             </a>.
         </footer>
         <script src='SpeechAPILibrary.js'></script>
+        <script>
+            function recognitionStartClickEventHandler()
+            {
+                var elementToHideID = "button_sttStart";
+                var elementToShowID = "button_sttStop"
+
+                console.log("recognitionStartClickEventHandler(): Requesting recognition start.")
+                SpeechAPI.SpeechToText.ContinuousSession().getInstance().start();
+                document.getElementById(elementToHideID).style.display="none";
+                document.getElementById(elementToShowID).style.display="block";
+            }
+
+            function recognitionStopClickEventHandler()
+            {
+                var elementToHideID = "button_sttStop";
+                var elementToShowID = "button_sttStart"
+
+                document.getElementById(elementToHideID).style.display="none";
+                console.log("recognitionStartClickEventHandler(): Requesting recognition stop.")
+                SpeechAPI.SpeechToText.ContinuousSession().getInstance().stop();
+
+
+                console.log(SpeechAPI.SpeechToText.ContinuousSession().getInstance().getFinalTranscript());
+                document.getElementById(elementToShowID).style.display="block";
+
+            }
+
+        </script>
         <script>
             var elementToHideID = "div_NoJavaScriptWarning";
             document.getElementById(elementToHideID).style.display="none";
