@@ -51,6 +51,179 @@
 </footer>
 <script src='SpeechAPILibrary.js'></script>
 <script>
+    var elementToHideID = "div_NoJavaScriptWarning";
+    document.getElementById(elementToHideID).style.display="none";
+
+    //Here we detect if speech synthesis is supported by the client browser:
+    if(SpeechAPI.SpeechToText.isSupported())
+    {
+        //If it's supported we need to update our UI.
+        console.log("STT Supported!");
+
+
+        var elementToShowID = "div_sttInputs";
+        document.getElementById(elementToShowID).style.display="block";
+    }
+    else
+    {
+        console.log("STT Not Supported!");
+        var elementToShowID = "div_STTNotSupportedWarning";
+        document.getElementById(elementToShowID).style.display="block";
+    }
+
+</script>
+<script>
+    function ContinuousSession()
+    {
+        //Private variables:
+        var _CLASS_NAME        = "ContinuousSession";
+        var _startRequested    = false;
+        var _stopRequested     = false;
+        var _recognition       = null;
+
+        if(SpeechAPI.SpeechToText.isSupported())
+        {
+            _recognition                = new webkitSpeechRecognition();
+            _recognition.continuous     = true;
+            _recognition.interimResults = true;
+        }
+
+        //Private functions:
+        function isFunction(desiredVariable)
+        {
+            var FUNCTION_TYPE_STRING = "function";
+
+            var result = false;
+
+            if(desiredVariable)
+            {
+                if(typeof(desiredVariable)==FUNCTION_TYPE_STRING)
+                {
+                    result = true;
+                }
+
+            }
+
+            return result;
+        }
+
+        //Public functions:
+        this.startRequested = function()
+        {
+            return _startRequested;
+        };
+
+        this.stopRequested = function()
+        {
+            return _stopRequested;
+        };
+
+        this.start = function()
+        {
+            var FUNCTION_NAME = "start()";
+            var LOG_PREFIX    = _CLASS_NAME+"."+FUNCTION_NAME+": ";
+
+            _startRequested = true;
+            _stopRequested  = false;
+
+            if(_recognition)
+            {
+                try
+                {
+                    var logMessage = LOG_PREFIX+"Requesting recognition start...";
+                    console.log(logMessage);
+                    _recognition.stop();
+                }
+                catch(err)
+                {
+                    var logMessage = LOG_PREFIX+"Exception encountered while requesting recognition start.";
+                    console.log(logMessage);
+                    console.log(err);
+                }
+            }
+            else
+            {
+                var logMessage = LOG_PREFIX+"ERROR: Recognition object was null!";
+            }
+        };
+
+        this.stop = function()
+        {
+            var FUNCTION_NAME = "stop()";
+            var LOG_PREFIX    = _CLASS_NAME+"."+FUNCTION_NAME+": ";
+
+            _stopRequested  = true;
+            _startRequested = false;
+            if(_recognition)
+            {
+                try
+                {
+                    var logMessage = LOG_PREFIX+"Requesting recognition stop...";
+                    console.log(logMessage);
+                    _recognition.stop();
+                }
+                catch(err)
+                {
+                    var logMessage = LOG_PREFIX+"Exception encountered while requesting recognition stop.";
+                    console.log(logMessage);
+                    console.log(err);
+                }
+            }
+            else
+            {
+                var logMessage = LOG_PREFIX+"ERROR: Recognition object was null!";
+            }
+        };
+
+        this.setEventHandler_onresult = function(desiredFunction)
+        {
+            if(_recognition)
+            {
+                if(isFunction(desiredFunction))
+                {
+                    _recognition.onresult=desiredFunction;
+                }
+            }
+        };
+
+        this.setEventHandler_onstart = function(desiredFunction)
+        {
+            if(_recognition)
+            {
+                if (isFunction(desiredFunction))
+                {
+                    _recognition.onstart = desiredFunction;
+                }
+            }
+
+        };
+
+        this.setEventHandler_onend = function(desiredFunction)
+        {
+            if(_recognition)
+            {
+                if (isFunction(desiredFunction))
+                {
+                    _recognition.onend = desiredFunction;
+                }
+            }
+        };
+
+        this.setEventHandler_onerror = function(desiredFunction)
+        {
+            if(_recognition)
+            {
+                if (isFunction(desiredFunction))
+                {
+                    _recognition.onerror = desiredFunction;
+                }
+            }
+        };
+
+    }
+
+</script>
+<script>
     function recognitionStartClickEventHandler()
     {
         var elementToHideID = "button_sttStart";
@@ -73,28 +246,6 @@
 
 
         console.log(SpeechAPI.SpeechToText.ContinuousSession().getInstance().getFinalTranscript());
-        document.getElementById(elementToShowID).style.display="block";
-    }
-
-</script>
-<script>
-    var elementToHideID = "div_NoJavaScriptWarning";
-    document.getElementById(elementToHideID).style.display="none";
-
-    //Here we detect if speech synthesis is supported by the client browser:
-    if(SpeechAPI.SpeechToText.isSupported())
-    {
-        //If it's supported we need to update our UI.
-        console.log("STT Supported!");
-
-
-        var elementToShowID = "div_sttInputs";
-        document.getElementById(elementToShowID).style.display="block";
-    }
-    else
-    {
-        console.log("STT Not Supported!");
-        var elementToShowID = "div_STTNotSupportedWarning";
         document.getElementById(elementToShowID).style.display="block";
     }
 
