@@ -73,8 +73,8 @@
         <script>
             function recognitionStartClickEventHandler()
             {
-                var elementToHideID = "button_sttStart";
-                var elementToShowID = "button_sttStop"
+                var elementToHideID = "button_ttsStart";
+                var elementToShowID = "button_ttsStop"
 
                 console.log("recognitionStartClickEventHandler(): Requesting recognition start.")
                 SpeechAPI.SpeechToText.ContinuousSession().getInstance().start();
@@ -84,8 +84,8 @@
 
             function recognitionStopClickEventHandler()
             {
-                var elementToHideID = "button_sttStop";
-                var elementToShowID = "button_sttStart"
+                var elementToHideID = "button_ttsStop";
+                var elementToShowID = "button_ttsStart"
 
                 document.getElementById(elementToHideID).style.display="none";
                 console.log("recognitionStartClickEventHandler(): Requesting recognition stop.")
