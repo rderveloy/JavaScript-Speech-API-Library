@@ -1,0 +1,103 @@
+<!--
+-- Author:  Robert Derveloy
+-- Written: 2013-01-15
+-- 
+-- Copyright (c) 2013-2015 -  Robert Derveloy
+-- 
+-- This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+-- To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/.
+--
+-->
+<html>
+<head>
+    <title>JavaScript Speech API Library Demo</title>
+</head>
+<body>
+<section id="section_NoJSWarning">
+    <div id="div_NoJavaScriptWarning" name="div_NoJavaScriptWarning">
+        <p>
+            Sorry!  Your browser does not appear to have JavaScript enabled.  Please enable JavaScript in your browser for this site to function correctly.
+        </p>
+        <p>
+            If your browser is incapable of running JavaScript, please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of compatible browsers.
+        </p>
+    </div>
+</section>
+<section id="section_STT">
+    <div id="div_STTNotSupportedWarning" name="div_TTSNotSupportedWarning" style="display:none;">
+        <p>OOPS!</p>
+        <p>Your browser does not appear to support the Speech Recognition API.  Please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of capable browsers.</p>
+    </div>
+    <div id="div_sttInputs" name="div_sttInputs" style="display:none;">
+
+        <button id='button_sttStart' onclick="recognitionStartClickEventHandler();">Start Recognition</button>
+        <button id='button_sttStop' onclick="recognitionStopClickEventHandler();" style="display:none;">Stop Recognition</button>
+    </div>
+</section>
+<footer>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a>
+    <br />
+            <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">
+                JavaScript Speech API Library
+            </span>
+    by
+    <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/rderveloy/JavaScript-Sound-Recorder/" property="cc:attributionName" rel="cc:attributionURL">
+        Robert Derveloy
+    </a>
+    is licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+        Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
+    </a>.
+</footer>
+<script src='SpeechAPILibrary.js'></script>
+<script>
+    function recognitionStartClickEventHandler()
+    {
+        var elementToHideID = "button_sttStart";
+        var elementToShowID = "button_sttStop"
+
+        console.log("recognitionStartClickEventHandler(): Requesting recognition start.")
+        SpeechAPI.SpeechToText.ContinuousSession().getInstance().start();
+        document.getElementById(elementToHideID).style.display="none";
+        document.getElementById(elementToShowID).style.display="block";
+    }
+
+    function recognitionStopClickEventHandler()
+    {
+        var elementToHideID = "button_sttStop";
+        var elementToShowID = "button_sttStart"
+
+        document.getElementById(elementToHideID).style.display="none";
+        console.log("recognitionStartClickEventHandler(): Requesting recognition stop.")
+        SpeechAPI.SpeechToText.ContinuousSession().getInstance().stop();
+
+
+        console.log(SpeechAPI.SpeechToText.ContinuousSession().getInstance().getFinalTranscript());
+        document.getElementById(elementToShowID).style.display="block";
+    }
+
+</script>
+<script>
+    var elementToHideID = "div_NoJavaScriptWarning";
+    document.getElementById(elementToHideID).style.display="none";
+
+    //Here we detect if speech synthesis is supported by the client browser:
+    if(SpeechAPI.SpeechToText.isSupported())
+    {
+        //If it's supported we need to update our UI.
+        console.log("STT Supported!");
+
+
+        var elementToShowID = "div_sttInputs";
+        document.getElementById(elementToShowID).style.display="block";
+    }
+    else
+    {
+        console.log("STT Not Supported!");
+        var elementToShowID = "div_STTNotSupportedWarning";
+        document.getElementById(elementToShowID).style.display="block";
+    }
+
+</script>
+</body>
+</html>
