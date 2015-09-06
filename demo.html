@@ -51,7 +51,7 @@
             <div id="div_sttInputs" name="div_sttInputs" style="display:none;">
                 <!--<input id='input_stt' name='input_stt' size='128' value='Son of Jor-El, kneel before Zahd!' /> <!-- I know 'Zahd' should be 'Zod', but speech synthesis often requires phonetic spellings!-->
                 <button onclick="SpeechAPI.SpeechToText.ContinuousSession().getInstance().start();">Start Listening</button>
-                <button onclick="SpeechAPI.TextToSpeech.utter(document.getElementById('input_tts').value);">Stop</button>
+                <button onclick="SpeechAPI.SpeechToText.ContinuousSession().getInstance().stop();">Stop</button>
             </div>
         </section>
         <footer>
