@@ -132,7 +132,7 @@ var SpeechAPI =
                     recognition.onstart = function defaultRecognitionEventHandler_onstart()
                     {
                         console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Recognition started.");
-                        if(!startRequested)
+                        if(!instance.startRequested)
                         {
                             console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Recognition started, but was not requested.");
                             console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Stopping recognition...");
@@ -146,7 +146,7 @@ var SpeechAPI =
                     };
                     recognition.onend = function defaultRecognitionEventHandler_onend()
                     {
-                        if(!stopRequested)
+                        if(!instance.stopRequested)
                         {
                             console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onend(): Recognition ended, but was not requested.");
                             console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onend(): Restarting recognition...");
@@ -254,15 +254,15 @@ var SpeechAPI =
                     },
                     start: function()
                     {
-                        startRequested = true;
-                        stopRequested  = false;
+                        instance.startRequested = true;
+                        instance.stopRequested  = false;
                         recognition.start();
                         console.log("SpeechAPI->SpeechToText->ContinousSession->start(): Starting session.");
                     },
                     stop: function()
                     {
-                        stopRequested  = true;
-                        startRequested = false;
+                        instance.stopRequested  = true;
+                        instance.startRequested = false;
                         recognition.stop();
                         console.log("SpeechAPI->SpeechToText->ContinousSession->start(): Stopping session.");
                     }
