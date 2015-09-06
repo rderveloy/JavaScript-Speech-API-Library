@@ -10,7 +10,7 @@
  
 var SpeechAPI = 
 {
-    TextToSpeech : 
+    SpeechSynthesis :
     {
         isSupported : function()
         {
@@ -26,7 +26,7 @@ var SpeechAPI =
             }
             catch(err)
             {
-                var message = "SpeechAPI->TextToSpeech->isSupported(): Exception encountered while performing speech synthesis detection.";
+                var message = "SpeechAPI->SpeechSynthesis->isSupported(): Exception encountered while performing speech synthesis detection.";
                 console.log(message);
                 console.log(err);
             }
@@ -69,7 +69,7 @@ var SpeechAPI =
                 {
                     if(textToSpeak != EMPTY_STRING)
                     {
-                        if(SpeechAPI.TextToSpeech.isSupported())
+                        if(SpeechAPI.SpeechSynthesis.isSupported())
                         {
                             var msg = new SpeechSynthesisUtterance(textToSpeak);
                             speechSynthesis.speak(msg);            
@@ -82,7 +82,7 @@ var SpeechAPI =
                 }
             }
         }//End utter
-    },//End TextToSpeech
+    },//End SpeechSynthesis
     SpeechToText :
     {
         isSupported: function()

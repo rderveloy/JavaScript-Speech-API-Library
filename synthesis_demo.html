@@ -41,7 +41,7 @@
             </div>
             <div id="div_ttsInputs" name="div_ttsInputs" style="display:none;">
                 <input id='input_tts' name='input_tts' size='128' value='Son of Jor-El, kneel before Zahd!' /> <!-- I know 'Zahd' should be 'Zod', but speech synthesis often requires phonetic spellings!-->
-                <button onclick="SpeechAPI.TextToSpeech.utter(document.getElementById('input_tts').value);">Go!</button>
+                <button onclick="SpeechAPI.SpeechSynthesis.utter(document.getElementById('input_tts').value);">Go!</button>
             </div>
 
             <br/>
@@ -68,7 +68,7 @@
             document.getElementById(elementToHideID).style.display="none";
 
             //Here we detect if speech synthesis is supported by the client browser:
-            if(SpeechAPI.TextToSpeech.isSupported())
+            if(SpeechAPI.SpeechSynthesis.isSupported())
             {
                 //If it's supported we need to update our UI.
                 console.log("TTS Supported!");
@@ -156,7 +156,7 @@
                         {
                             ttsInputDiv.style.display="block";
                             //Use the speech synthesis api to say hi to the user:
-                            SpeechAPI.TextToSpeech.utter("Hi!  When you're ready, type something, and click the \"GO\" BUTTON!");
+                            SpeechAPI.SpeechSynthesis.utter("Hi!  When you're ready, type something, and click the \"GO\" BUTTON!");
                         }
 
                     }
@@ -177,7 +177,7 @@
                 };
 
                 //Send the payload function to the API to be executed:
-                SpeechAPI.TextToSpeech.executeFunctionIfVoicesInstalled(payloadFunction);
+                SpeechAPI.SpeechSynthesis.executeFunctionIfVoicesInstalled(payloadFunction);
             }
             else
             {
