@@ -231,10 +231,12 @@
 
     test.setEventHandler_onend(function onEndEventHandler(event){
         console.log("Recognition ended.");
+        console.log("Stop Requested: "+test.stopRequested());
     });
 
     test.setEventHandler_onstart(function onStartEventHandler(event){
         console.log("Recognition started.");
+        console.log("Start Requested: "+test.startRequested());
     });
 
     test.setEventHandler_onerror(function onErrorEventHandler(event){
