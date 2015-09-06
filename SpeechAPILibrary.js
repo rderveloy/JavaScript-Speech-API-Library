@@ -131,36 +131,36 @@ var SpeechAPI =
 
                     recognition.onstart = function defaultRecognitionEventHandler_onstart()
                     {
-                        //console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Recognition started.");
+                        //console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Recognition started.");
                         //if(!SpeechAPI.SpeechToText.ContinuousSession().getInstance().startRequested)
                         //{
-                        //    console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Recognition started, but was not requested.");
-                        //    console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Stopping recognition...");
+                        //    console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Recognition started, but was not requested.");
+                        //    console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Stopping recognition...");
                         //    SpeechAPI.SpeechToText.ContinuousSession().getInstance().stop();
                         //}
                         //else
                         //{
-                        //    console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition started by request.");
+                        //    console.log("SpeechAPI->SpeechToText->ContinuousSession(): Recognition started by request.");
                         //}
 
-                        console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Recognition started");
-                        console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Start Requested: "+SpeechAPI.SpeechToText.ContinousSession().getInstance().getStartRequestedFlag());
+                        console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Recognition started");
+                        console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Start Requested: "+SpeechAPI.SpeechToText.ContinuousSession().getInstance().getStartRequestedFlag());
 
                     };
                     recognition.onend = function defaultRecognitionEventHandler_onend()
                     {
                         if(!SpeechAPI.SpeechToText.ContinuousSession().getInstance().stopRequested)
                         {
-                            console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onend(): Recognition ended, but was not requested.");
-                            console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onend(): Restarting recognition...");
+                            console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onend(): Recognition ended, but was not requested.");
+                            console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onend(): Restarting recognition...");
                             SpeechAPI.SpeechToText.ContinuousSession().getInstance().start();
                         }
                         else
                         {
                             console.log("SpeechAPI->SpeechToText->ContinousSession(): Recognition ended by request.");
                         }
-                        console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Recognition ended.");
-                        console.log("SpeechAPI->SpeechToText->ContinousSession->defaultRecognitionEventHandler_onstart(): Stop Requested: "+SpeechAPI.SpeechToText.ContinousSession().getInstance().getStopRequestedFlag());
+                        console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Recognition ended.");
+                        console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Stop Requested: "+SpeechAPI.SpeechToText.ContinuousSession().getInstance().getStopRequestedFlag());
                     };
                     recognition.onresult = function defaultRecognitionEventHandler_onresult(event)
                     {
