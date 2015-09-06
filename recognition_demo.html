@@ -248,7 +248,32 @@
 
     test.setEventHandler_onresult(function onResultEventHandler(event){
         console.log("Recognition result!");
+
         console.log(event);
+
+        var resultIndex       = event.resultIndex;
+        var resultArrayLength = event.results.length;
+
+        interimTranscript = "";
+
+        for (var currentIndex=resultIndex; currentIndex < resultArrayLength; ++currentIndex)
+        {
+            var currentRecognitionResult             = event.results[currentIndex];
+            var currentRecognitionResultAlternative  = currentRecognitionResult[0];
+
+            if(currentRecognitionResult.isFinal)
+            {
+                finalTranscript+=currentRecognitionResultAlternative.transcript;
+            }
+            else
+            {
+                interimTranscript+=currentRecognitionResultAlternative.transcript;
+            }
+
+
+        }
+        console.log("Interim: "+interimTranscript);
+        console.log("Final:   "+finalTranscript);
     });
 
     function recognitionStartClickEventHandler()
