@@ -205,40 +205,51 @@
 
         this.setEventHandler_onstart = function(desiredFunctionToExecute)
         {
-
             var sessionInstance = this;
 
-            function scopePreserverWrapper(desiredFunctionToExecute)
+            function onstart_scopePreserverWrapper(desiredFunctionToExecute, desiredSessionInstance)
             {
-                console.log("In scopePreserverWrapper function.");
-                return function (event)
+                return function onstart_scopePreserverWrapperReturnPayload(event)
                 {
-                    console.log("Entering scopePreserverWrapper payload.");
-//                    if(sessionInstance)
-//                    {
-//                        console.log(sessionInstance.getPrivateString());
-//                    }
+                    console.log("Entering onstart_scopePreserverWrapperReturnPayload().");
+                    if(desiredSessionInstance)
+                    {
+                        console.log(desiredSessionInstance.getPrivateString());
+                    }
 
                     if(desiredFunctionToExecute)
                     {
-                        desiredFunctionToExecute(event);
+                        try
+                        {
+                            desiredFunctionToExecute(event);
+                        }
+                        catch(caughtException)
+                        {
+                            console.log("ERROR: An exception was encountered when attempting to execute the desired recognition.onstart event handler.");
+                            console.log(caughtException);
+                        }
                     }
-                    console.log("Leaving scopePreserverWrapper payload.");
+                    console.log("Leaving onstart_scopePreserverWrapperReturnPayload().");
                 };
-
             }
 
             if(_recognition)
             {
-                console.log("Assigning onstart event handler.");
-                _recognition.onresult = scopePreserverWrapper(desiredFunctionToExecute);
+                try
+                {
+                    _recognition.onstart = onstart_scopePreserverWrapper(desiredFunctionToExecute,sessionInstance);
+                }
+                catch(caughtException)
+                {
+                    console.log("ERROR: An exception was encountered when attempting to assign the recognition.onstart event handler.");
+                    console.log(caughtException);
+                }
+
             }
             else
             {
                 console.log("Error: Unable to assign onstart event handler. Recognition object not set.");
             }
-
-            console.log("Leaving setEventHandler_onstart().");
         };
 
         this.setEventHandler_onend = function(desiredFunctionToExecute)
