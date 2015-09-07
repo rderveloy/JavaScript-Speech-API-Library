@@ -249,13 +249,71 @@
 
         this.setEventHandler_onerror = function(desiredFunctionToExecute)
         {
+            var sessionInstance = this;
+
+            function onerror_scopePreserverWrapper(desiredFunctionToExecute, desiredSessionInstance)
+            {
+                return function onerror_scopePreserverWrapperReturnPayload(event)
+                {
+                    var logMessage = "ERROR: An error was encountered during recognition."
+                    console.log(logMessage);
+
+                    console.log(event);
+
+                    if(desiredSessionInstance)
+                    {
+                        try
+                        {
+                            var currentInterimTranscript = desiredSessionInstance.getInterimTranscript();
+                            var currentFinalTranscript   = desiredSessionInstance.getFinalTranscript();
+
+                            var logMessage = "Current interim transcript: " + currentInterimTranscript;
+                            console.log(logMessage);
+
+                            var logMessage = "Current final transcript: " + currentFinalTranscript;
+                            console.log(logMessage);
+
+                        }
+                        catch(caughtException)
+                        {
+                            console.log("ERROR: An exception was encountered when attempting to work with the recognition session instance.");
+                            console.log(caughtException);
+                        }
+                    }
+
+                    if(desiredFunctionToExecute)
+                    {
+                        try
+                        {
+                            desiredFunctionToExecute(event);
+                        }
+                        catch(caughtException)
+                        {
+                            console.log("ERROR: An exception was encountered when attempting to execute the desired recognition.onerror event handler.");
+                            console.log(caughtException);
+                        }
+                    }
+                };
+            }
+
             if(_recognition)
             {
-                if(isFunction(desiredFunctionToExecute))
+                try
                 {
-                    _recognition.onresult=desiredFunctionToExecute;
+                    _recognition.onerror = onerror_scopePreserverWrapper(desiredFunctionToExecute,sessionInstance);
                 }
+                catch(caughtException)
+                {
+                    console.log("ERROR: An exception was encountered when attempting to assign the recognition.onerror event handler.");
+                    console.log(caughtException);
+                }
+
             }
+            else
+            {
+                console.log("Error: Unable to assign onerror event handler. Recognition object not set.");
+            }
+
         };
 
         this.setEventHandler_onstart = function(desiredFunctionToExecute,executeOnRequestOnly)
@@ -270,10 +328,11 @@
                     {
                         try
                         {
-                            var logMessage = "Recognition Started.  Requested: "+desiredSessionInstance.startRequested()+".";
+                            var startRequested = desiredSessionInstance.startRequested();
+                            var logMessage = "Recognition Started.  Requested: "+startRequested+".";
                             console.log(logMessage);
 
-                            if(!desiredSessionInstance.startRequested())
+                            if(!startRequested)
                             {
                                 var logMessage = "Requesting stop.";
                                 console.log(logMessage);
@@ -343,10 +402,11 @@
                     {
                         try
                         {
-                            var logMessage = "Recognition stopped.  Requested: "+desiredSessionInstance.startRequested()+".";
+                            var stopRequested = desiredSessionInstance.stopRequested();
+                            var logMessage = "Recognition stopped.  Requested: "+stopRequested+".";
                             console.log(logMessage);
 
-                            if(!desiredSessionInstance.stopRequested())
+                            if(!stopRequested)
                             {
                                 var logMessage = "Requesting start.";
                                 console.log(logMessage);
@@ -378,7 +438,7 @@
                         }
                         catch(caughtException)
                         {
-                            console.log("ERROR: An exception was encountered when attempting to execute the desired recognition.onstart event handler.");
+                            console.log("ERROR: An exception was encountered when attempting to execute the desired recognition.onend event handler.");
                             console.log(caughtException);
                         }
                     }
@@ -393,14 +453,14 @@
                 }
                 catch(caughtException)
                 {
-                    console.log("ERROR: An exception was encountered when attempting to assign the recognition.onstart event handler.");
+                    console.log("ERROR: An exception was encountered when attempting to assign the recognition.onend event handler.");
                     console.log(caughtException);
                 }
 
             }
             else
             {
-                console.log("Error: Unable to assign onstart event handler. Recognition object not set.");
+                console.log("Error: Unable to assign onend event handler. Recognition object not set.");
             }
         };
 
