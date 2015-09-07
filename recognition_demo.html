@@ -205,6 +205,7 @@
 
         this.setEventHandler_onstart = function(desiredFunctionToExecute)
         {
+            console.log("Entering setEventHandler_onstart().");
             var sessionInstance = this;
             function scopePreserverWrapper(desiredFunctionToExecute, sessionInstance)
             {
@@ -230,6 +231,7 @@
                 _recognition.onresult = scopePreserverWrapper(desiredFunctionToExecute, sessionInstance);
             }
 
+            console.log("Leaving setEventHandler_onstart().");
         };
 
         this.setEventHandler_onend = function(desiredFunctionToExecute)
