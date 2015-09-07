@@ -76,13 +76,20 @@
 <script>
     function ContinuousSession()
     {
+        //Private constants
+        var _CLASS_NAME           = function(){return "ContinuousSession";};
+        var _STRING_TYPE          = function(){return "string";};
+        var _EMPTY_STRING         = function(){return "";};
+        var _FUNCTION_TYPE_STRING = function(){return "function";};
+
         //Private variables:
-        var _CLASS_NAME                = "ContinuousSession";
         var _startRequested            = false;
         var _stopRequested             = false;
         var _recognition               = null;
+        var _interimTranscript         = "";
+        var _finalTranscript           = "";
 
-        var _privateString = "private message";
+
 
         if(SpeechAPI.SpeechToText.isSupported())
         {
@@ -94,13 +101,11 @@
         //Private functions:
         function isFunction(desiredVariable)
         {
-            var FUNCTION_TYPE_STRING = "function";
-
             var result = false;
 
             if(desiredVariable)
             {
-                if(typeof(desiredVariable)==FUNCTION_TYPE_STRING)
+                if(typeof(desiredVariable)==_FUNCTION_TYPE_STRING)
                 {
                     result = true;
                 }
@@ -110,18 +115,55 @@
             return result;
         };
 
-        //Public functions:
-        this.getPrivateString = function()
+        function isString(desiredVariable)
         {
-            return _privateString;
+            var result = false;
+
+            if(desiredVariable)
+            {
+                if(typeof(desiredVariable)==_STRING_TYPE)
+                {
+                    result = true;
+                }
+            }
+
+            return result;
         };
 
-        this.appendToPrivateString = function(desiredText)
+        //Public functions:
+        this.getInterimTranscript = function()
         {
+            return _interimTranscript;
+        };
 
-            if(desiredText)
+        this.resetInterimTranscript()
+        {
+            _interimTranscript="";
+        };
+
+        this.appendToInterimTranscript = function(desiredText)
+        {
+            if(isString(desiredText))
             {
-                _privateString+=desiredText;
+                _interimTranscript+=desiredText;
+            }
+        };
+
+        this.getFinalTranscript = function()
+        {
+            return _finalTranscript;
+        };
+
+        this.resetFinalTranscript()
+        {
+            _finalTranscript="";
+        };
+
+        this.appendToFinalTranscript = function(desiredText)
+        {
+            if(isString(desiredText))
+            {
+                _finalTranscript+=desiredText;
             }
         };
 
@@ -205,35 +247,51 @@
             }
         };
 
-        this.setEventHandler_onstart = function(desiredFunctionToExecute)
+        this.setEventHandler_onstart = function(desiredFunctionToExecute,executeOnRequestOnly)
         {
             var sessionInstance = this;
 
-            function onstart_scopePreserverWrapper(desiredFunctionToExecute, desiredSessionInstance)
+            function onstart_scopePreserverWrapper(desiredFunctionToExecute, executeOnRequestOnly, desiredSessionInstance)
             {
                 return function onstart_scopePreserverWrapperReturnPayload(event)
                 {
-                    console.log("Entering onstart_scopePreserverWrapperReturnPayload().");
+                    var executeDesiredFunctionToExecute = false;
                     if(desiredSessionInstance)
                     {
                         try
                         {
-                            desiredSessionInstance.appendToPrivateString(".  Hi!  I'm appended!");
-                            console.log(desiredSessionInstance.getPrivateString());
+                            var logMessage = "Recognition Started.  Requested: "+desiredSessionInstance.startRequested()+".";
+                            console.log(logMessage);
+
+                            if(!desiredSessionInstance.startRequested())
+                            {
+                                var logMessage = "Requesting stop.");
+                                console.log(logMessage);
+                                desiredSessionInstance.stop();
+                            }
                         }
                         catch(caughtException)
                         {
                             console.log("ERROR: An exception was encountered when attempting to work with the recognition session instance.");
                             console.log(caughtException);
                         }
-
                     }
 
                     if(desiredFunctionToExecute)
                     {
                         try
                         {
-                            desiredFunctionToExecute(event);
+                            if(executeOnRequestOnly)
+                            {
+                                if(desiredSessionInstance)
+                                {
+                                    desiredFunctionToExecute(event);
+                                }
+                            }
+                            else
+                            {
+                                desiredFunctionToExecute(event);
+                            }
                         }
                         catch(caughtException)
                         {
@@ -241,7 +299,6 @@
                             console.log(caughtException);
                         }
                     }
-                    console.log("Leaving onstart_scopePreserverWrapperReturnPayload().");
                 };
             }
 
@@ -249,7 +306,7 @@
             {
                 try
                 {
-                    _recognition.onstart = onstart_scopePreserverWrapper(desiredFunctionToExecute,sessionInstance);
+                    _recognition.onstart = onstart_scopePreserverWrapper(desiredFunctionToExecute,executeOnRequestOnly,sessionInstance);
                 }
                 catch(caughtException)
                 {
@@ -264,25 +321,77 @@
             }
         };
 
-        this.setEventHandler_onend = function(desiredFunctionToExecute)
+        this.setEventHandler_onend = function(desiredFunctionToExecute,executeOnRequestOnly)
         {
-            if(_recognition)
-            {
-                if (isFunction(desiredFunctionToExecute))
-                {
-                    _recognition.onend = desiredFunctionToExecute;
-                }
-            }
-        };
+            var sessionInstance = this;
 
-        this.setEventHandler_onerror = function(desiredFunctionToExecute)
-        {
+            function onend_scopePreserverWrapper(desiredFunctionToExecute, executeOnRequestOnly, desiredSessionInstance)
+            {
+                return function onend_scopePreserverWrapperReturnPayload(event)
+                {
+                    var executeDesiredFunctionToExecute = false;
+                    if(desiredSessionInstance)
+                    {
+                        try
+                        {
+                            var logMessage = "Recognition stopped.  Requested: "+desiredSessionInstance.startRequested()+".";
+                            console.log(logMessage);
+
+                            if(!desiredSessionInstance.stopRequested())
+                            {
+                                var logMessage = "Requesting start.");
+                                console.log(logMessage);
+                                desiredSessionInstance.start();
+                            }
+                        }
+                        catch(caughtException)
+                        {
+                            console.log("ERROR: An exception was encountered when attempting to work with the recognition session instance.");
+                            console.log(caughtException);
+                        }
+                    }
+
+                    if(desiredFunctionToExecute)
+                    {
+                        try
+                        {
+                            if(executeOnRequestOnly)
+                            {
+                                if(desiredSessionInstance)
+                                {
+                                    desiredFunctionToExecute(event);
+                                }
+                            }
+                            else
+                            {
+                                desiredFunctionToExecute(event);
+                            }
+                        }
+                        catch(caughtException)
+                        {
+                            console.log("ERROR: An exception was encountered when attempting to execute the desired recognition.onstart event handler.");
+                            console.log(caughtException);
+                        }
+                    }
+                };
+            }
+
             if(_recognition)
             {
-                if (isFunction(desiredFunctionToExecute))
+                try
                 {
-                    _recognition.onerror = desiredFunctionToExecute;
+                    _recognition.onend = onend_scopePreserverWrapper(desiredFunctionToExecute,executeOnRequestOnly, sessionInstance);
                 }
+                catch(caughtException)
+                {
+                    console.log("ERROR: An exception was encountered when attempting to assign the recognition.onstart event handler.");
+                    console.log(caughtException);
+                }
+
+            }
+            else
+            {
+                console.log("Error: Unable to assign onstart event handler. Recognition object not set.");
             }
         };
 
