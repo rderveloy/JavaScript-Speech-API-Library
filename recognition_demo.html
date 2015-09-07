@@ -214,7 +214,17 @@
                     console.log("Entering onstart_scopePreserverWrapperReturnPayload().");
                     if(desiredSessionInstance)
                     {
-                        console.log(desiredSessionInstance.getPrivateString());
+                        try
+                        {
+                            desiredSessionInstance.appendToPrivateString(".  Hi!  I'm appended!");
+                            console.log(desiredSessionInstance.getPrivateString());
+                        }
+                        catch(caughtException)
+                        {
+                            console.log("ERROR: An exception was encountered when attempting to work with the recognition session instance.");
+                            console.log(caughtException);
+                        }
+
                     }
 
                     if(desiredFunctionToExecute)
