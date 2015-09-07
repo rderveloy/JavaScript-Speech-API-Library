@@ -205,18 +205,19 @@
 
         this.setEventHandler_onstart = function(desiredFunctionToExecute)
         {
-            console.log("Entering setEventHandler_onstart().");
+
             var sessionInstance = this;
 
-            function scopePreserverWrapper(desiredFunctionToExecute, sessionInstance)
+            function scopePreserverWrapper(desiredFunctionToExecute)
             {
+                console.log("In scopePreserverWrapper function.");
                 return function (event)
                 {
                     console.log("Entering scopePreserverWrapper payload.");
-                    if(sessionInstance)
-                    {
-                        console.log(sessionInstance.getPrivateString());
-                    }
+//                    if(sessionInstance)
+//                    {
+//                        console.log(sessionInstance.getPrivateString());
+//                    }
 
                     if(desiredFunctionToExecute)
                     {
@@ -230,7 +231,7 @@
             if(_recognition)
             {
                 console.log("Assigning onstart event handler.");
-                _recognition.onresult = scopePreserverWrapper(desiredFunctionToExecute, sessionInstance);
+                _recognition.onresult = scopePreserverWrapper(desiredFunctionToExecute);
             }
             else
             {
