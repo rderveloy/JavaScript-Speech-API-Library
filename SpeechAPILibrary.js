@@ -37,7 +37,7 @@ var SpeechAPI =
         {
             function scopePreserverWrapper(desiredFunctionToExecute)
             {
-                return function ()
+                return function (event)
                 {            
                     var voiceArray = window.speechSynthesis.getVoices();                       
 
