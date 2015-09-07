@@ -81,6 +81,8 @@
         var _stopRequested             = false;
         var _recognition               = null;
 
+        var _privateString = "private message";
+
         if(SpeechAPI.SpeechToText.isSupported())
         {
             _recognition                = new webkitSpeechRecognition();
@@ -108,6 +110,20 @@
         }
 
         //Public functions:
+        this.getPrivateString = function()
+        {
+            return _privateString;
+        }
+
+        this.appendToPrivateString = function(desiredText)
+        {
+
+            if(desiredText)
+            {
+                _privateString+=desiredText;
+            }
+        }
+
         this.startRequested = function()
         {
             return _startRequested;
@@ -176,47 +192,62 @@
             }
         };
 
-        this.setEventHandler_onresult = function(desiredFunction)
+        this.setEventHandler_onresult = function(desiredFunctionToExecute)
         {
             if(_recognition)
             {
-                if(isFunction(desiredFunction))
+                if(isFunction(desiredFunctionToExecute))
                 {
-                    _recognition.onresult=desiredFunction;
+                    _recognition.onresult=desiredFunctionToExecute;
                 }
             }
         };
 
-        this.setEventHandler_onstart = function(desiredFunction)
+        this.setEventHandler_onstart = function(desiredFunctionToExecute)
         {
+            var sessionInstance = this;
+            function scopePreserverWrapper(desiredFunctionToExecute, sessionInstance)
+            {
+
+                return function combinedEventHandler_onstart(event)
+                {
+                    if(sessionInstance)
+                    {
+                        console.log(sessionInstance.getPrivateString());
+                    }
+
+                    if(desiredFunctionToExecute)
+                    {
+                        desiredFunctionToExecute(event);
+                    }
+                };
+            }
+
             if(_recognition)
             {
-                if (isFunction(desiredFunction))
-                {
-                    _recognition.onstart = desiredFunction;
-                }
+                _recognition.onresult = scopePreserverWrapper(desiredFunctionToExecute, sessionInstance);
             }
 
         };
 
-        this.setEventHandler_onend = function(desiredFunction)
+        this.setEventHandler_onend = function(desiredFunctionToExecute)
         {
             if(_recognition)
             {
-                if (isFunction(desiredFunction))
+                if (isFunction(desiredFunctionToExecute))
                 {
-                    _recognition.onend = desiredFunction;
+                    _recognition.onend = desiredFunctionToExecute;
                 }
             }
         };
 
-        this.setEventHandler_onerror = function(desiredFunction)
+        this.setEventHandler_onerror = function(desiredFunctionToExecute)
         {
             if(_recognition)
             {
-                if (isFunction(desiredFunction))
+                if (isFunction(desiredFunctionToExecute))
                 {
-                    _recognition.onerror = desiredFunction;
+                    _recognition.onerror = desiredFunctionToExecute;
                 }
             }
         };
