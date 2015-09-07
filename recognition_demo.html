@@ -207,6 +207,7 @@
         {
             console.log("Entering setEventHandler_onstart().");
             var sessionInstance = this;
+
             function scopePreserverWrapper(desiredFunctionToExecute, sessionInstance)
             {
                 return function (event)
@@ -228,7 +229,12 @@
 
             if(_recognition)
             {
+                console.log("Assigning onstart event handler.");
                 _recognition.onresult = scopePreserverWrapper(desiredFunctionToExecute, sessionInstance);
+            }
+            else
+            {
+                console.log("Error: Unable to assign onstart event handler. Recognition object not set.");
             }
 
             console.log("Leaving setEventHandler_onstart().");
