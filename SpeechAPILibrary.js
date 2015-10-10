@@ -14,12 +14,12 @@ var SpeechAPI =
     {
         isSupported : function()
         {
-            var result     = false;
-            var TTS_STRING = 'speechSynthesis';
+            var SPEECH_SYNTHESIS_STRING = 'speechSynthesis';
+            var result                  = false;
 
             try
             {
-                if(TTS_STRING in window)
+                if(SPEECH_SYNTHESIS_STRING in window)
                 {
                     result = true;
                 }    
