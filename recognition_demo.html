@@ -136,7 +136,7 @@
             return _interimTranscript;
         };
 
-        this.resetInterimTranscript = function()
+        this.resetInterimTranscript()
         {
             _interimTranscript="";
         };
@@ -154,7 +154,7 @@
             return _finalTranscript;
         };
 
-        this.resetFinalTranscript = function()
+        this.resetFinalTranscript()
         {
             _finalTranscript="";
         };
@@ -255,6 +255,7 @@
             {
                 return function onstart_scopePreserverWrapperReturnPayload(event)
                 {
+                    var executeDesiredFunctionToExecute = false;
                     if(desiredSessionInstance)
                     {
                         try
@@ -328,6 +329,7 @@
             {
                 return function onend_scopePreserverWrapperReturnPayload(event)
                 {
+                    var executeDesiredFunctionToExecute = false;
                     if(desiredSessionInstance)
                     {
                         try
