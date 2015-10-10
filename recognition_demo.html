@@ -247,17 +247,6 @@
             }
         };
 
-        this.setEventHandler_onerror = function(desiredFunctionToExecute)
-        {
-            if(_recognition)
-            {
-                if(isFunction(desiredFunctionToExecute))
-                {
-                    _recognition.onresult=desiredFunctionToExecute;
-                }
-            }
-        };
-
         this.setEventHandler_onstart = function(desiredFunctionToExecute,executeOnRequestOnly)
         {
             var sessionInstance = this;
