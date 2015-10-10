@@ -420,21 +420,18 @@
 
 
     test.setEventHandler_onend(function onEndEventHandler(event){
-        var handlerName = "onend";
-        console.log("Entering supplied event handler for:"+handlerName);
-        console.log("Leaving supplied event handler for:"+handlerName);
+        console.log("Recognition ended.");
+        console.log("Stop Requested: "+test.stopRequested());
     });
 
     test.setEventHandler_onstart(function onStartEventHandler(event){
-        var handlerName = "onstart";
-        console.log("Entering supplied event handler for:"+handlerName);
-        console.log("Leaving supplied event handler for:"+handlerName);
+        console.log("Recognition started.");
+        console.log("Start Requested: "+test.startRequested());
     });
 
     test.setEventHandler_onerror(function onErrorEventHandler(event){
-        var handlerName = "onerror";
-        console.log("Entering supplied event handler for:"+handlerName);
-        console.log("Leaving supplied event handler for:"+handlerName);
+        console.log("Recognition error!");
+        console.log(event);
     });
 
     test.setEventHandler_onresult(function onResultEventHandler(event){
