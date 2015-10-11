@@ -439,7 +439,7 @@
 
         this.setEventHandler_onend = function(desiredFunctionToExecute)
         {
-            var FUNCTION_NAME = "setEventHandler_onstart()";
+            var FUNCTION_NAME = "setEventHandler_onend()";
             var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
             var logMessage    = null;
 
@@ -492,6 +492,7 @@
                     console.log(logMessage);
                 };
             }
+
             if(_recognition)
             {
                 try
@@ -518,8 +519,70 @@
             var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
             var logMessage    = null;
 
+            var sessionInstance = this;
+
+            function onerror_scopePreserverWrapper(desiredFunctionToExecute, desiredSessionInstance)
+            {
+                return function onerror_scopePreserverWrapperReturnPayload(event)
+                {
+                    var PAYLOAD_FUNCTION_NAME = "onerror_scopePreserverWrapperReturnPayload()";
+                    logMessage = LOG_PREFIX+"->"+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
+                    console.log(logMessage);
+
+                    if(desiredSessionInstance)
+                    {
+                        try
+                        {
+                            desiredSessionInstance.appendToPrivateString("  Hi!  I've been appended by "+PAYLOAD_FUNCTION_NAME+"!");
+                            console.log(desiredSessionInstance.getPrivateString());
+                        }
+                        catch(caughtException)
+                        {
+                            logMessage = LOG_PREFIX+"->"+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to work with the recognition session instance.";
+                            console.log(logMessage);
+                            console.log(caughtException);
+                        }
+                    }
+                    if(desiredFunctionToExecute)
+                    {
+                        if(isFunction(desiredFunctionToExecute))
+                        {
+                            try
+                            {
+                                desiredFunctionToExecute(event);
+                            }
+                            catch (caughtException)
+                            {
+                                logMessage = LOG_PREFIX+"->"+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to execute the desired recognition.onerror event handler.";
+                                console.log(logMessage);
+                                console.log(caughtException);
+                            }
+                        }
+                        else
+                        {
+                            logMessage = LOG_PREFIX+"->"+PAYLOAD_FUNCTION_NAME+": ERROR: The desiredFunctionToExecute variable was not a function!";
+                            console.log(logMessage);
+                            console.log(caughtException);
+                        }
+                    }
+                    logMessage = LOG_PREFIX+"->"+PAYLOAD_FUNCTION_NAME+": Leaving "+PAYLOAD_FUNCTION_NAME+".";
+                    console.log(logMessage);
+                };
+            }
+
             if(_recognition)
             {
+                try
+                {
+                    _recognition.onerror = onerror_scopePreserverWrapper(desiredFunctionToExecute,sessionInstance);
+                }
+                catch(caughtException)
+                {
+                    logMessage = LOG_PREFIX+"->ERROR: An exception was encountered when attempting to assign the recognition.onerror event handler.";
+                    console.log(logMessage);
+                    console.log(caughtException);
+                }
+                /*
                 if (isFunction(desiredFunctionToExecute))
                 {
                     _recognition.onerror = desiredFunctionToExecute;
@@ -529,6 +592,7 @@
                     logMessage = LOG_PREFIX+"Error: Unable to assign onerror event handler. The desiredFunctionToExecute variable was not a function!";
                     console.log(logMessage);
                 }
+                */
             }
             else
             {
