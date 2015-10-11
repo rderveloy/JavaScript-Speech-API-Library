@@ -55,22 +55,23 @@
 <script src='SpeechAPILibrary.js'></script>
 <script>
     var elementToHideID = "div_NoJavaScriptWarning";
+    var elementToShowID = null;
     document.getElementById(elementToHideID).style.display="none";
 
     //Here we detect if speech synthesis is supported by the client browser:
     if(SpeechAPI.SpeechToText.isSupported())
     {
-        //If it's supported we need to update our UI.
+        //If it's supported, we need to update our UI:
         console.log("STT Supported!");
-        var elementToShowID = "div_sttInputs";
-        document.getElementById(elementToShowID).style.display="block";
+        elementToShowID = "div_sttInputs";
     }
     else
     {
+        //If it's not supported, let the end user know:
         console.log("STT Not Supported!");
-        var elementToShowID = "div_STTNotSupportedWarning";
-        document.getElementById(elementToShowID).style.display="block";
+        elementToShowID = "div_STTNotSupportedWarning";
     }
+    document.getElementById(elementToShowID).style.display="block";
 
 </script>
 <script>
@@ -85,11 +86,11 @@
 
         //Private variables:
         //var _CLASS_NAME                = "ContinuousSession";
-        var _startRequested            = false;
-        var _stopRequested             = false;
-        var _recognition               = null;
-        var _interimTranscript         = "";
-        var _finalTranscript           = "";
+        var _startRequested    = false;
+        var _stopRequested     = false;
+        var _recognition       = null;
+        var _interimTranscript = "";
+        var _finalTranscript   = "";
 
         var _privateString = "private message";
 
@@ -103,17 +104,14 @@
         //Private functions:
         function isFunction(desiredVariable)
         {
-            var FUNCTION_TYPE_STRING = "function";
-
             var result = false;
 
             if(desiredVariable)
             {
-                if(typeof(desiredVariable)==FUNCTION_TYPE_STRING)
+                if(typeof(desiredVariable)==_FUNCTION_TYPE_STRING())
                 {
                     result = true;
                 }
-
             }
 
             return result;
@@ -127,7 +125,6 @@
 
         this.appendToPrivateString = function(desiredText)
         {
-
             if(desiredText)
             {
                 _privateString+=desiredText;
@@ -147,29 +144,31 @@
         this.start = function()
         {
             var FUNCTION_NAME = "start()";
-            var LOG_PREFIX    = _CLASS_NAME+"."+FUNCTION_NAME+": ";
+            var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+            var logMessage    = null;
 
             _startRequested = true;
             _stopRequested  = false;
 
             if(_recognition)
             {
+
                 try
                 {
-                    var logMessage = LOG_PREFIX+"Requesting recognition start...";
+                    logMessage = LOG_PREFIX+"Requesting recognition start...";
                     console.log(logMessage);
                     _recognition.start();
                 }
                 catch(err)
                 {
-                    var logMessage = LOG_PREFIX+"Exception encountered while requesting recognition start.";
+                    logMessage = LOG_PREFIX+"Exception encountered while requesting recognition start.";
                     console.log(logMessage);
                     console.log(err);
                 }
             }
             else
             {
-                var logMessage = LOG_PREFIX+"ERROR: Recognition object was null!";
+                logMessage = LOG_PREFIX+"ERROR: Recognition object was null!";
                 console.log(logMessage);
             }
         };
@@ -177,28 +176,30 @@
         this.stop = function()
         {
             var FUNCTION_NAME = "stop()";
-            var LOG_PREFIX    = _CLASS_NAME+"."+FUNCTION_NAME+": ";
+            var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+            var logMessage    = null;
 
             _stopRequested  = true;
             _startRequested = false;
+
             if(_recognition)
             {
                 try
                 {
-                    var logMessage = LOG_PREFIX+"Requesting recognition stop...";
+                    logMessage = LOG_PREFIX+"Requesting recognition stop...";
                     console.log(logMessage);
                     _recognition.stop();
                 }
                 catch(err)
                 {
-                    var logMessage = LOG_PREFIX+"Exception encountered while requesting recognition stop.";
+                    logMessage = LOG_PREFIX+"Exception encountered while requesting recognition stop.";
                     console.log(logMessage);
                     console.log(err);
                 }
             }
             else
             {
-                var logMessage = LOG_PREFIX+"ERROR: Recognition object was null!";
+                logMessage = LOG_PREFIX+"ERROR: Recognition object was null!";
                 console.log(logMessage);
             }
         };
