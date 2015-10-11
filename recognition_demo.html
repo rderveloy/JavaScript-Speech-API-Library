@@ -339,52 +339,82 @@
 
         this.setEventHandler_onresult = function(desiredFunctionToExecute)
         {
+            var FUNCTION_NAME = "setEventHandler_onresult()";
+            var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+            var logMessage    = null;
+
             if(_recognition)
             {
                 if(isFunction(desiredFunctionToExecute))
                 {
                     _recognition.onresult=desiredFunctionToExecute;
                 }
+                else
+                {
+                    logMessage = LOG_PREFIX+"Error: Unable to assign onresult event handler. The desiredFunctionToExecute variable was not a function!";
+                    console.log(logMessage);
+                }
+            }
+            else
+            {
+                logMessage = LOG_PREFIX+"Error: Unable to assign onresult event handler. Recognition object not set.";
+                console.log(logMessage);
             }
         };
 
         this.setEventHandler_onstart = function(desiredFunctionToExecute)
         {
+            var FUNCTION_NAME = "setEventHandler_onstart()";
+            var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+            var logMessage    = null;
+
             var sessionInstance = this;
 
             function onstart_scopePreserverWrapper(desiredFunctionToExecute, desiredSessionInstance)
             {
                 return function onstart_scopePreserverWrapperReturnPayload(event)
                 {
-                    console.log("Entering onstart_scopePreserverWrapperReturnPayload().");
+                    logMessage = LOG_PREFIX+"->onstart_scopePreserverWrapper(): Entering onstart_scopePreserverWrapperReturnPayload()";
+                    console.log(logMessage);
                     if(desiredSessionInstance)
                     {
                         try
                         {
-                            desiredSessionInstance.appendToPrivateString(".  Hi!  I'm appended!");
+                            desiredSessionInstance.appendToPrivateString("  Hi!  I've been appended by onstart_scopePreserverWrapperReturnPayload()!");
                             console.log(desiredSessionInstance.getPrivateString());
                         }
                         catch(caughtException)
                         {
-                            console.log("ERROR: An exception was encountered when attempting to work with the recognition session instance.");
+                            logMessage = LOG_PREFIX+"->onstart_scopePreserverWrapper(): ERROR: An exception was encountered when attempting to work with the recognition session instance.";
+                            console.log(logMessage);
                             console.log(caughtException);
                         }
-
                     }
 
                     if(desiredFunctionToExecute)
                     {
-                        try
+                        if(isFunction(desiredFunctionToExecute))
                         {
-                            desiredFunctionToExecute(event);
+                            try
+                            {
+                                desiredFunctionToExecute(event);
+                            }
+                            catch (caughtException)
+                            {
+                                logMessage = LOG_PREFIX+"->onstart_scopePreserverWrapper(): ERROR: An exception was encountered when attempting to execute the desired recognition.onstart event handler.";
+                                console.log(logMessage);
+                                console.log(caughtException);
+                            }
                         }
-                        catch(caughtException)
+                        else
                         {
-                            console.log("ERROR: An exception was encountered when attempting to execute the desired recognition.onstart event handler.");
+                            logMessage = LOG_PREFIX+"->onstart_scopePreserverWrapper(): ERROR: The desiredFunctionToExecute variable was not a function!";
+                            console.log(logMessage);
                             console.log(caughtException);
                         }
                     }
-                    console.log("Leaving onstart_scopePreserverWrapperReturnPayload().");
+                    logMessage = LOG_PREFIX+"->onstart_scopePreserverWrapper(): Leaving onstart_scopePreserverWrapperReturnPayload().";
+                    console.log(logMessage);
                 };
             }
 
@@ -396,36 +426,116 @@
                 }
                 catch(caughtException)
                 {
-                    console.log("ERROR: An exception was encountered when attempting to assign the recognition.onstart event handler.");
+                    logMessage = LOG_PREFIX+"ERROR: An exception was encountered when attempting to assign the recognition.onstart event handler.";
+                    console.log(logMessage);
                     console.log(caughtException);
                 }
 
             }
             else
             {
-                console.log("Error: Unable to assign onstart event handler. Recognition object not set.");
+                logMessage = LOG_PREFIX+"ERROR: Unable to assign onstart event handler. Recognition object not set.";
+                console.log(logMessage);
             }
         };
 
         this.setEventHandler_onend = function(desiredFunctionToExecute)
         {
+            var FUNCTION_NAME = "setEventHandler_onstart()";
+            var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+            var logMessage    = null;
+
+            var sessionInstance = this;
+
+            function onend_scopePreserverWrapper(desiredFunctionToExecute, desiredSessionInstance)
+            {
+                return function onend_scopePreserverWrapperReturnPayload(event)
+                {
+                    logMessage = LOG_PREFIX+"->onend_scopePreserverWrapperReturnPayload(): Entering onend_scopePreserverWrapperReturnPayload().";
+                    console.log(logMessage);
+
+                    if(desiredSessionInstance)
+                    {
+                        try
+                        {
+                            desiredSessionInstance.appendToPrivateString("  Hi!  I've been appended by onend_scopePreserverWrapperReturnPayload()!");
+                            console.log(desiredSessionInstance.getPrivateString());
+                        }
+                        catch(caughtException)
+                        {
+                            logMessage = LOG_PREFIX+"->onend_scopePreserverWrapperReturnPayload(): ERROR: An exception was encountered when attempting to work with the recognition session instance.";
+                            console.log(logMessage);
+                            console.log(caughtException);
+                        }
+                    }
+                    if(desiredFunctionToExecute)
+                    {
+                        if(isFunction(desiredFunctionToExecute))
+                        {
+                            try
+                            {
+                                desiredFunctionToExecute(event);
+                            }
+                            catch (caughtException)
+                            {
+                                logMessage = LOG_PREFIX+"->onend_scopePreserverWrapperReturnPayload(): ERROR: An exception was encountered when attempting to execute the desired recognition.onend event handler.";
+                                console.log(logMessage);
+                                console.log(caughtException);
+                            }
+                        }
+                        else
+                        {
+                            logMessage = LOG_PREFIX+"->onend_scopePreserverWrapperReturnPayload(): ERROR: The desiredFunctionToExecute variable was not a function!";
+                            console.log(logMessage);
+                            console.log(caughtException);
+                        }
+                    }
+                    logMessage = LOG_PREFIX+"->onend_scopePreserverWrapperReturnPayload(): Leaving onend_scopePreserverWrapperReturnPayload().";
+                    console.log(logMessage);
+                };
+            }
             if(_recognition)
             {
-                if (isFunction(desiredFunctionToExecute))
+                try
                 {
-                    _recognition.onend = desiredFunctionToExecute;
+                    _recognition.onstart = onend_scopePreserverWrapper(desiredFunctionToExecute,sessionInstance);
                 }
+                catch(caughtException)
+                {
+                    logMessage = LOG_PREFIX+"->ERROR: An exception was encountered when attempting to assign the recognition.onend event handler.";
+                    console.log(logMessage);
+                    console.log(caughtException);
+                }
+            }
+            else
+            {
+                logMessage = LOG_PREFIX+"->ERROR: Unable to assign onend event handler. Recognition object not set.";
+                console.log(logMessage);
             }
         };
 
         this.setEventHandler_onerror = function(desiredFunctionToExecute)
         {
+            var FUNCTION_NAME = "setEventHandler_onerror()";
+            var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+            var logMessage    = null;
+
             if(_recognition)
             {
                 if (isFunction(desiredFunctionToExecute))
                 {
                     _recognition.onerror = desiredFunctionToExecute;
                 }
+                else
+                {
+                    logMessage = LOG_PREFIX+"Error: Unable to assign onerror event handler. The desiredFunctionToExecute variable was not a function!";
+                    console.log(logMessage);
+                }
+            }
+            else
+            {
+                logMessage = LOG_PREFIX+"Error: Unable to assign onerror event handler. Recognition object not set.";
+                console.log(logMessage);
             }
         };
 
