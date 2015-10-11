@@ -44,9 +44,7 @@
                 JavaScript Speech API Library
             </span>
     by
-    <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/rderveloy/JavaScript-Sound-Recorder/" property="cc:attributionName" rel="cc:attributionURL">
-        Robert Derveloy
-    </a>
+    <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/rderveloy/JavaScript-Speech-API-Library/" property="cc:attributionName" rel="cc:attributionURL">Robert Derveloy</a>
     is licensed under a
     <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
         Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
@@ -498,7 +496,7 @@
             {
                 try
                 {
-                    _recognition.onstart = onend_scopePreserverWrapper(desiredFunctionToExecute,sessionInstance);
+                    _recognition.onend = onend_scopePreserverWrapper(desiredFunctionToExecute,sessionInstance);
                 }
                 catch(caughtException)
                 {
