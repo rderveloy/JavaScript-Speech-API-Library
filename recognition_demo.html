@@ -76,11 +76,20 @@
 <script>
     function ContinuousSession()
     {
+
+        //Private constants
+        var _CLASS_NAME           = function(){return "ContinuousSession";};
+        var _STRING_TYPE          = function(){return "string";};
+        var _EMPTY_STRING         = function(){return "";};
+        var _FUNCTION_TYPE_STRING = function(){return "function";};
+
         //Private variables:
-        var _CLASS_NAME                = "ContinuousSession";
+        //var _CLASS_NAME                = "ContinuousSession";
         var _startRequested            = false;
         var _stopRequested             = false;
         var _recognition               = null;
+        var _interimTranscript         = "";
+        var _finalTranscript           = "";
 
         var _privateString = "private message";
 
