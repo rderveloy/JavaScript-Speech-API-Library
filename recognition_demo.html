@@ -80,8 +80,8 @@
 
         //Private constants
         var _CLASS_NAME           = function(){return "ContinuousSession";};
-        var _STRING_TYPE          = function(){return "string";};
         var _EMPTY_STRING         = function(){return "";};
+        var _STRING_TYPE_STRING   = function(){return "string";};
         var _FUNCTION_TYPE_STRING = function(){return "function";};
 
         //Private variables:
@@ -118,6 +118,73 @@
         };
 
         //Public functions:
+        this.getInterimTranscript = function()
+        {
+            return _interimTranscript;
+        };
+
+        this.assignStringToInterimTranscript = function(desiredText)
+        {
+            var FUNCTION_NAME = "assignStringToInterimTranscript()";
+            var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+            var logMessage    = null;
+
+            if(desiredText)
+            {
+                if(typeof(desiredText)==_STRING_TYPE_STRING())
+                {
+                    if(desiredText!=_EMPTY_STRING())
+                    {
+                        _interimTranscript = desiredText;
+                    }
+                    else
+                    {
+                        logMessage = LOG_PREFIX+"WARNING: The value of the desiredText variable was an empty string.  Using built-in reset function.";
+                        console.log(logMessage);
+                        this.resetInterimTranscriptToEmptyString();
+                    }
+                }
+                else
+                {
+                    logMessage = LOG_PREFIX+"ERROR: The desiredText variable was not a string!  Aborting append request.";
+                    console.log(logMessage);
+                }
+            }
+        };
+
+        this.appendStringToInterimTranscript = function(desiredText)
+        {
+            var FUNCTION_NAME = "appendStringToInterimTranscript()";
+            var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+            var logMessage    = null;
+
+            if(desiredText)
+            {
+                if(typeof(desiredText)==_STRING_TYPE_STRING())
+                {
+                    if(desiredText!=_EMPTY_STRING())
+                    {
+                        _interimTranscript += desiredText;
+                    }
+                    else
+                    {
+                        logMessage = LOG_PREFIX+"WARNING: The value of the desiredText variable was an empty string.  Aborting append request.";
+                        console.log(logMessage);
+                    }
+                }
+                else
+                {
+                    logMessage = LOG_PREFIX+"ERROR: The desiredText variable was not a string!  Aborting append request.";
+                    console.log(logMessage);
+                }
+            }
+        };
+
+        this.resetInterimTranscriptToEmptyString = function()
+        {
+            _interimTranscript=_EMPTY_STRING();
+        };
+
         this.getPrivateString = function()
         {
             return _privateString;
