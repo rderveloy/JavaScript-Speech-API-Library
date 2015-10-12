@@ -277,7 +277,7 @@
             return _stopRequested;
         };
 
-        this.start = function()
+        this.start = function(preserveTranscripts)
         {
             var FUNCTION_NAME = "start()";
             var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
@@ -286,11 +286,20 @@
             _startRequested = true;
             _stopRequested  = false;
 
+            if(!preserveTranscripts)
+            {
+                this.resetFinalTranscriptToEmptyString();
+                this.resetInterimTranscriptToEmptyString();
+                this.resetPrivateString();
+            }
+
             if(_recognition)
             {
 
                 try
                 {
+
+
                     logMessage = LOG_PREFIX+"Requesting recognition start...";
                     console.log(logMessage);
                     _recognition.start();
@@ -629,10 +638,6 @@
     });
 
     test.setEventHandler_onstart(function onStartEventHandler(event){
-        test.resetPrivateString();
-        test.resetFinalTranscriptToEmptyString();
-        test.resetInterimTranscriptToEmptyString();
-
         console.log("Recognition started.");
         console.log("Start Requested: "+test.startRequested());
     });
