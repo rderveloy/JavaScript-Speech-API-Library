@@ -81,7 +81,8 @@
     document.getElementById(elementToShowID).style.display="block";
 
 </script>
-<script>
+<!--<script>
+/*
     function ContinuousSession()
     {
         //Private constants
@@ -624,8 +625,8 @@
         };
 
     }
-
-</script>
+*/
+</script>-->
 <script>
 
     //TODO: Continue session when ended without request or error.
@@ -658,7 +659,7 @@
 
     test.setEventHandler_onerror(function onErrorEventHandler(event){
         console.log("Recognition error!");
-        console.log(event);
+        //TODO: Update ui for error messages.
     });
 
     test.setEventHandler_onresult(function onResultEventHandler(event){
