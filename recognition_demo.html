@@ -262,6 +262,11 @@
             }
         };
 
+        this.resetPrivateString = function()
+        {
+            _privateString=_EMPTY_STRING();
+        };
+
         this.startRequested = function()
         {
             return _startRequested;
@@ -624,6 +629,10 @@
     });
 
     test.setEventHandler_onstart(function onStartEventHandler(event){
+        test.resetPrivateString();
+        test.resetFinalTranscriptToEmptyString();
+        test.resetInterimTranscriptToEmptyString();
+
         console.log("Recognition started.");
         console.log("Start Requested: "+test.startRequested());
     });
