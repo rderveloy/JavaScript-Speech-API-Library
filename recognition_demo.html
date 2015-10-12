@@ -298,8 +298,6 @@
 
                 try
                 {
-
-
                     logMessage = LOG_PREFIX+"Requesting recognition start...";
                     console.log(logMessage);
                     _recognition.start();
@@ -635,6 +633,12 @@
     test.setEventHandler_onend(function onEndEventHandler(event){
         console.log("Recognition ended.");
         console.log("Stop Requested: "+test.stopRequested());
+
+        var elementToHideID = "button_sttStop";
+        var elementToShowID = "button_sttStart";
+
+        document.getElementById(elementToHideID).style.display="none";
+        document.getElementById(elementToShowID).style.display="block";
     });
 
     test.setEventHandler_onstart(function onStartEventHandler(event){
@@ -656,6 +660,7 @@
         var resultArrayLength = event.results.length;
 
         interimTranscript = "";
+        test.resetInterimTranscriptToEmptyString();
 
         for (var currentIndex=resultIndex; currentIndex < resultArrayLength; ++currentIndex)
         {
@@ -683,14 +688,19 @@
             if(currentRecognitionResult.isFinal)
             {
                 finalTranscript += transcriptToAppend;
+                test.appendStringToFinalTranscript(transcriptToAppend);
             }
             else
             {
                 interimTranscript += transcriptToAppend;
+                test.appendStringToInterimTranscript(transcriptToAppend);
             }
         }
-        console.log("Interim: "+interimTranscript);
-        console.log("Final:   "+finalTranscript);
+        //console.log("Interim: "+interimTranscript);
+        //console.log("Final:   "+finalTranscript);
+
+        console.log("Interim: "+test.getInterimTranscript());
+        console.log("Final:   "+test.getFinalTranscript());
     });
 
     function recognitionStartClickEventHandler()
