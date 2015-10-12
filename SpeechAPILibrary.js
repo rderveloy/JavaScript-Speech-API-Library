@@ -578,8 +578,14 @@ var SpeechAPI =
                         logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
                         console.log(logMessage);
 
-                        var logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An error was encountered during recognition!"
+                        //TODO: Add exception handling around the retreival of the error message:
+
+                        var eventErrorMessage = event.error;
+
+                        var logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An error was encountered during recognition!  The event's error message was: '" +eventErrorMessage+"'."
                         console.log(logMessage);
+
+
                         console.log(event);
 
                         //TODO: Determine error type and behave according to encountered error!
