@@ -372,7 +372,8 @@
             {
                 return function onstart_scopePreserverWrapperReturnPayload(event)
                 {
-                    logMessage = LOG_PREFIX+"->onstart_scopePreserverWrapper(): Entering onstart_scopePreserverWrapperReturnPayload()";
+                    var PAYLOAD_FUNCTION_NAME = "onstart_scopePreserverWrapperReturnPayload()";
+                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
                     console.log(logMessage);
                     if(desiredSessionInstance)
                     {
@@ -383,7 +384,7 @@
                         }
                         catch(caughtException)
                         {
-                            logMessage = LOG_PREFIX+"->onstart_scopePreserverWrapper(): ERROR: An exception was encountered when attempting to work with the recognition session instance.";
+                            logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to work with the recognition session instance.";
                             console.log(logMessage);
                             console.log(caughtException);
                         }
@@ -399,19 +400,19 @@
                             }
                             catch (caughtException)
                             {
-                                logMessage = LOG_PREFIX+"->onstart_scopePreserverWrapper(): ERROR: An exception was encountered when attempting to execute the desired recognition.onstart event handler.";
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to execute the desired recognition.onstart event handler.";
                                 console.log(logMessage);
                                 console.log(caughtException);
                             }
                         }
                         else
                         {
-                            logMessage = LOG_PREFIX+"->onstart_scopePreserverWrapper(): ERROR: The desiredFunctionToExecute variable was not a function!";
+                            logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: The desiredFunctionToExecute variable was not a function!";
                             console.log(logMessage);
                             console.log(caughtException);
                         }
                     }
-                    logMessage = LOG_PREFIX+"->onstart_scopePreserverWrapper(): Leaving onstart_scopePreserverWrapperReturnPayload().";
+                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Leaving "+PAYLOAD_FUNCTION_NAME+".";
                     console.log(logMessage);
                 };
             }
@@ -449,7 +450,8 @@
             {
                 return function onend_scopePreserverWrapperReturnPayload(event)
                 {
-                    logMessage = LOG_PREFIX+"->onend_scopePreserverWrapperReturnPayload(): Entering onend_scopePreserverWrapperReturnPayload().";
+                    var PAYLOAD_FUNCTION_NAME = "onend_scopePreserverWrapperReturnPayload()";
+                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
                     console.log(logMessage);
 
                     if(desiredSessionInstance)
@@ -461,7 +463,7 @@
                         }
                         catch(caughtException)
                         {
-                            logMessage = LOG_PREFIX+"->onend_scopePreserverWrapperReturnPayload(): ERROR: An exception was encountered when attempting to work with the recognition session instance.";
+                            logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to work with the recognition session instance.";
                             console.log(logMessage);
                             console.log(caughtException);
                         }
@@ -476,19 +478,19 @@
                             }
                             catch (caughtException)
                             {
-                                logMessage = LOG_PREFIX+"->onend_scopePreserverWrapperReturnPayload(): ERROR: An exception was encountered when attempting to execute the desired recognition.onend event handler.";
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to execute the desired recognition.onend event handler.";
                                 console.log(logMessage);
                                 console.log(caughtException);
                             }
                         }
                         else
                         {
-                            logMessage = LOG_PREFIX+"->onend_scopePreserverWrapperReturnPayload(): ERROR: The desiredFunctionToExecute variable was not a function!";
+                            logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: The desiredFunctionToExecute variable was not a function!";
                             console.log(logMessage);
                             console.log(caughtException);
                         }
                     }
-                    logMessage = LOG_PREFIX+"->onend_scopePreserverWrapperReturnPayload(): Leaving onend_scopePreserverWrapperReturnPayload().";
+                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Leaving "+PAYLOAD_FUNCTION_NAME+".";
                     console.log(logMessage);
                 };
             }
@@ -501,14 +503,14 @@
                 }
                 catch(caughtException)
                 {
-                    logMessage = LOG_PREFIX+"->ERROR: An exception was encountered when attempting to assign the recognition.onend event handler.";
+                    logMessage = LOG_PREFIX+"ERROR: An exception was encountered when attempting to assign the recognition.onend event handler.";
                     console.log(logMessage);
                     console.log(caughtException);
                 }
             }
             else
             {
-                logMessage = LOG_PREFIX+"->ERROR: Unable to assign onend event handler. Recognition object not set.";
+                logMessage = LOG_PREFIX+"ERROR: Unable to assign onend event handler. Recognition object not set.";
                 console.log(logMessage);
             }
         };
@@ -526,7 +528,7 @@
                 return function onerror_scopePreserverWrapperReturnPayload(event)
                 {
                     var PAYLOAD_FUNCTION_NAME = "onerror_scopePreserverWrapperReturnPayload()";
-                    logMessage = LOG_PREFIX+"->"+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
+                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
                     console.log(logMessage);
 
                     if(desiredSessionInstance)
@@ -538,7 +540,7 @@
                         }
                         catch(caughtException)
                         {
-                            logMessage = LOG_PREFIX+"->"+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to work with the recognition session instance.";
+                            logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to work with the recognition session instance.";
                             console.log(logMessage);
                             console.log(caughtException);
                         }
@@ -553,19 +555,19 @@
                             }
                             catch (caughtException)
                             {
-                                logMessage = LOG_PREFIX+"->"+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to execute the desired recognition.onerror event handler.";
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to execute the desired recognition.onerror event handler.";
                                 console.log(logMessage);
                                 console.log(caughtException);
                             }
                         }
                         else
                         {
-                            logMessage = LOG_PREFIX+"->"+PAYLOAD_FUNCTION_NAME+": ERROR: The desiredFunctionToExecute variable was not a function!";
+                            logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: The desiredFunctionToExecute variable was not a function!";
                             console.log(logMessage);
                             console.log(caughtException);
                         }
                     }
-                    logMessage = LOG_PREFIX+"->"+PAYLOAD_FUNCTION_NAME+": Leaving "+PAYLOAD_FUNCTION_NAME+".";
+                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Leaving "+PAYLOAD_FUNCTION_NAME+".";
                     console.log(logMessage);
                 };
             }
@@ -578,7 +580,7 @@
                 }
                 catch(caughtException)
                 {
-                    logMessage = LOG_PREFIX+"->ERROR: An exception was encountered when attempting to assign the recognition.onerror event handler.";
+                    logMessage = LOG_PREFIX+"ERROR: An exception was encountered when attempting to assign the recognition.onerror event handler.";
                     console.log(logMessage);
                     console.log(caughtException);
                 }
