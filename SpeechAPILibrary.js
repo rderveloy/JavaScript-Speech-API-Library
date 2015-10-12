@@ -83,7 +83,7 @@ var SpeechAPI =
             }
         }//End utter
     },//End SpeechSynthesis
-    SpeechToText :
+    SpeechRecognition :
     {
         isSupported: function()
         {   
@@ -99,7 +99,7 @@ var SpeechAPI =
             }
             catch(caughtException)
             {
-                var message = "SpeechAPI.SpeechToText.isSupported(): Exception encountered while performing speech recognition detection.";
+                var message = "SpeechAPI.SpeechRecognition.isSupported(): Exception encountered while performing speech recognition detection.";
                 console.log(message);
                 console.log(caughtException);
             }
@@ -107,196 +107,543 @@ var SpeechAPI =
         },
         ContinuousSession: function ()
         {
-            // Instance stores a reference to the Singleton
-            var instance = null;
+            //Private constants
+            var _CLASS_NAME           = function(){return "ContinuousSession";};
+            var _EMPTY_STRING         = function(){return "";};
+            var _STRING_TYPE_STRING   = function(){return "string";};
+            var _FUNCTION_TYPE_STRING = function(){return "function";};
 
+            //Private variables:
+            var _startRequested    = false;
+            var _stopRequested     = false;
+            var _recognition       = null;
+            var _interimTranscript = "";
+            var _finalTranscript   = "";
 
-            function init()
+            var _privateString = "private message";
+
+            if(SpeechAPI.SpeechRecognition.isSupported())
             {
-                // Singleton
-                var finalTranscript   = "";
-                var interimTranscript = "";
-                var startRequested   = false;
-                var stopRequested    = false;
-                var recognition       = null;
+                _recognition                = new webkitSpeechRecognition();
+                _recognition.continuous     = true;
+                _recognition.interimResults = true;
+            }
 
-                var STRING_TYPE  = 'string';
-                var EMPTY_STRING = '';
+            //Private functions:
+            function isFunction(desiredVariable)
+            {
+                var result = false;
 
-                if(SpeechAPI.SpeechToText.isSupported())
+                if(desiredVariable)
                 {
-                    recognition                = new webkitSpeechRecognition();
-                    recognition.continuous     = true;
-                    recognition.interimResults = true;
-
-                    recognition.onstart = function defaultRecognitionEventHandler_onstart()
+                    if(typeof(desiredVariable)==_FUNCTION_TYPE_STRING())
                     {
-                        //console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Recognition started.");
-                        //if(!SpeechAPI.SpeechToText.ContinuousSession().getInstance().startRequested)
-                        //{
-                        //    console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Recognition started, but was not requested.");
-                        //    console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Stopping recognition...");
-                        //    SpeechAPI.SpeechToText.ContinuousSession().getInstance().stop();
-                        //}
-                        //else
-                        //{
-                        //    console.log("SpeechAPI->SpeechToText->ContinuousSession(): Recognition started by request.");
-                        //}
+                        result = true;
+                    }
+                }
 
-                        console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Recognition started");
-                        console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Start Requested: "+SpeechAPI.SpeechToText.ContinuousSession().getInstance().getStartRequestedFlag());
+                return result;
+            };
 
-                    };
-                    recognition.onend = function defaultRecognitionEventHandler_onend()
+            //Public functions:
+            this.getFinalTranscript = function()
+            {
+                return _finalTranscript;
+            };
+
+            this.resetFinalTranscriptToEmptyString = function()
+            {
+                _finalTranscript=_EMPTY_STRING();
+            };
+
+            this.assignStringToFinalTranscript = function(desiredText)
+            {
+                var FUNCTION_NAME = "assignStringToFinalTranscript()";
+                var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+                var logMessage    = null;
+
+                if(desiredText)
+                {
+                    if(typeof(desiredText)==_STRING_TYPE_STRING())
                     {
-                        //if(!SpeechAPI.SpeechToText.ContinuousSession().getInstance().stopRequested)
-                        //{
-                        //    console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onend(): Recognition ended, but was not requested.");
-                        //    console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onend(): Restarting recognition...");
-                        //    SpeechAPI.SpeechToText.ContinuousSession().getInstance().start();
-                        //}
-                        //else
-                        //{
-                        //    console.log("SpeechAPI->SpeechToText->ContinuousSession(): Recognition ended by request.");
-                        //}
-                        console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Recognition ended.");
-                        console.log("SpeechAPI->SpeechToText->ContinuousSession->defaultRecognitionEventHandler_onstart(): Stop Requested: "+SpeechAPI.SpeechToText.ContinuousSession().getInstance().getStopRequestedFlag());
-                    };
-                    recognition.onresult = function defaultRecognitionEventHandler_onresult(event)
-                    {
-                        var sessionInstance = SpeechAPI.SpeechToText.ContinuousSession().getInstance();
-
-                        sessionInstance.resetInterimTranscript();
-
-                        console.log(event);
-
-                        var resultIndex       = event.resultIndex;
-                        var resultArrayLength = event.results.length;
-
-                        for (var currentIndex=resultIndex; currentIndex < resultArrayLength; ++currentIndex)
+                        if(desiredText!=_EMPTY_STRING())
                         {
-                            var currentRecognitionResult                       = event.results[currentIndex];
-                            var currentRecognitionResultAlternative            = currentRecognitionResult[0];
+                            _finalTranscript = desiredText;
+                        }
+                        else
+                        {
+                            logMessage = LOG_PREFIX+"WARNING: The value of the desiredText variable was an empty string.  Using built-in reset function.";
+                            console.log(logMessage);
+                            this.resetFinalTranscriptToEmptyString();
+                        }
+                    }
+                    else
+                    {
+                        logMessage = LOG_PREFIX+"ERROR: The desiredText variable was not a string!  Aborting request.";
+                        console.log(logMessage);
+                    }
+                }
+            };
 
-                            if(currentRecognitionResult.isFinal)
+            this.appendStringToFinalTranscript = function(desiredText)
+            {
+                var FUNCTION_NAME = "appendStringToFinalTranscript()";
+                var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+                var logMessage    = null;
+
+                if(desiredText)
+                {
+                    if(typeof(desiredText)==_STRING_TYPE_STRING())
+                    {
+                        if(desiredText!=_EMPTY_STRING())
+                        {
+                            _finalTranscript += desiredText;
+                        }
+                        else
+                        {
+                            logMessage = LOG_PREFIX+"WARNING: The value of the desiredText variable was an empty string.  Aborting request.";
+                            console.log(logMessage);
+                        }
+                    }
+                    else
+                    {
+                        logMessage = LOG_PREFIX+"ERROR: The desiredText variable was not a string!  Aborting request.";
+                        console.log(logMessage);
+                    }
+                }
+            };
+
+            this.getInterimTranscript = function()
+            {
+                return _interimTranscript;
+            };
+
+            this.resetInterimTranscriptToEmptyString = function()
+            {
+                _interimTranscript=_EMPTY_STRING();
+            };
+
+            this.assignStringToInterimTranscript = function(desiredText)
+            {
+                var FUNCTION_NAME = "assignStringToInterimTranscript()";
+                var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+                var logMessage    = null;
+
+                if(desiredText)
+                {
+                    if(typeof(desiredText)==_STRING_TYPE_STRING())
+                    {
+                        if(desiredText!=_EMPTY_STRING())
+                        {
+                            _interimTranscript = desiredText;
+                        }
+                        else
+                        {
+                            logMessage = LOG_PREFIX+"WARNING: The value of the desiredText variable was an empty string.  Using built-in reset function.";
+                            console.log(logMessage);
+                            this.resetInterimTranscriptToEmptyString();
+                        }
+                    }
+                    else
+                    {
+                        logMessage = LOG_PREFIX+"ERROR: The desiredText variable was not a string!  Aborting request.";
+                        console.log(logMessage);
+                    }
+                }
+            };
+
+            this.appendStringToInterimTranscript = function(desiredText)
+            {
+                var FUNCTION_NAME = "appendStringToInterimTranscript()";
+                var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+                var logMessage    = null;
+
+                if(desiredText)
+                {
+                    if(typeof(desiredText)==_STRING_TYPE_STRING())
+                    {
+                        if(desiredText!=_EMPTY_STRING())
+                        {
+                            _interimTranscript += desiredText;
+                        }
+                        else
+                        {
+                            logMessage = LOG_PREFIX+"WARNING: The value of the desiredText variable was an empty string.  Aborting request.";
+                            console.log(logMessage);
+                        }
+                    }
+                    else
+                    {
+                        logMessage = LOG_PREFIX+"ERROR: The desiredText variable was not a string!  Aborting request.";
+                        console.log(logMessage);
+                    }
+                }
+            };
+
+            this.getPrivateString = function()
+            {
+                return _privateString;
+            };
+
+            this.appendToPrivateString = function(desiredText)
+            {
+                if(desiredText)
+                {
+                    _privateString+=desiredText;
+                }
+            };
+
+            this.resetPrivateString = function()
+            {
+                _privateString=_EMPTY_STRING();
+            };
+
+            this.startRequested = function()
+            {
+                return _startRequested;
+            };
+
+            this.stopRequested = function()
+            {
+                return _stopRequested;
+            };
+
+            this.start = function(preserveTranscripts)
+            {
+                var FUNCTION_NAME = "start()";
+                var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+                var logMessage    = null;
+
+                _startRequested = true;
+                _stopRequested  = false;
+
+                if(!preserveTranscripts)
+                {
+                    this.resetFinalTranscriptToEmptyString();
+                    this.resetInterimTranscriptToEmptyString();
+                    this.resetPrivateString();
+                }
+
+                if(_recognition)
+                {
+
+                    try
+                    {
+                        logMessage = LOG_PREFIX+"Requesting recognition start...";
+                        console.log(logMessage);
+                        _recognition.start();
+                    }
+                    catch(err)
+                    {
+                        logMessage = LOG_PREFIX+"Exception encountered while requesting recognition start.";
+                        console.log(logMessage);
+                        console.log(err);
+                    }
+                }
+                else
+                {
+                    logMessage = LOG_PREFIX+"ERROR: Recognition object was null!";
+                    console.log(logMessage);
+                }
+            };
+
+            this.stop = function()
+            {
+                var FUNCTION_NAME = "stop()";
+                var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+                var logMessage    = null;
+
+                _stopRequested  = true;
+                _startRequested = false;
+
+                if(_recognition)
+                {
+                    try
+                    {
+                        logMessage = LOG_PREFIX+"Requesting recognition stop...";
+                        console.log(logMessage);
+                        _recognition.stop();
+                    }
+                    catch(err)
+                    {
+                        logMessage = LOG_PREFIX+"Exception encountered while requesting recognition stop.";
+                        console.log(logMessage);
+                        console.log(err);
+                    }
+                }
+                else
+                {
+                    logMessage = LOG_PREFIX+"ERROR: Recognition object was null!";
+                    console.log(logMessage);
+                }
+            };
+
+            this.setEventHandler_onresult = function(desiredFunctionToExecute)
+            {
+                var FUNCTION_NAME = "setEventHandler_onresult()";
+                var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+                var logMessage    = null;
+
+                if(_recognition)
+                {
+                    if(isFunction(desiredFunctionToExecute))
+                    {
+                        _recognition.onresult=desiredFunctionToExecute;
+                    }
+                    else
+                    {
+                        logMessage = LOG_PREFIX+"Error: Unable to assign onresult event handler. The desiredFunctionToExecute variable was not a function!";
+                        console.log(logMessage);
+                    }
+                }
+                else
+                {
+                    logMessage = LOG_PREFIX+"Error: Unable to assign onresult event handler. Recognition object not set.";
+                    console.log(logMessage);
+                }
+            };
+
+            this.setEventHandler_onstart = function(desiredFunctionToExecute)
+            {
+                var FUNCTION_NAME = "setEventHandler_onstart()";
+                var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+                var logMessage    = null;
+
+                var sessionInstance = this;
+
+                function onstart_scopePreserverWrapper(desiredFunctionToExecute, desiredSessionInstance)
+                {
+                    return function onstart_scopePreserverWrapperReturnPayload(event)
+                    {
+                        var PAYLOAD_FUNCTION_NAME = "onstart_scopePreserverWrapperReturnPayload()";
+                        logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
+                        console.log(logMessage);
+                        if(desiredSessionInstance)
+                        {
+                            try
                             {
-                                sessionInstance.appendToFinalTranscript(currentRecognitionResultAlternative.transcript);
+                                desiredSessionInstance.appendToPrivateString("  Hi!  I've been appended by onstart_scopePreserverWrapperReturnPayload()!");
+                                console.log(desiredSessionInstance.getPrivateString());
+                            }
+                            catch(caughtException)
+                            {
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to work with the recognition session instance.";
+                                console.log(logMessage);
+                                console.log(caughtException);
+                            }
+                        }
+
+                        if(desiredFunctionToExecute)
+                        {
+                            if(isFunction(desiredFunctionToExecute))
+                            {
+                                try
+                                {
+                                    desiredFunctionToExecute(event);
+                                }
+                                catch (caughtException)
+                                {
+                                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to execute the desired recognition.onstart event handler.";
+                                    console.log(logMessage);
+                                    console.log(caughtException);
+                                }
                             }
                             else
                             {
-                                sessionInstance.appendToInterimTranscript(currentRecognitionResultAlternative.transcript);
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: The desiredFunctionToExecute variable was not a function!";
+                                console.log(logMessage);
+                                console.log(caughtException);
                             }
-
-
                         }
-                        console.log("Interim: "+sessionInstance.getInterimTranscript());
-                        console.log("Final:   "+sessionInstance.getFinalTranscript());
+                        logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Leaving "+PAYLOAD_FUNCTION_NAME+".";
+                        console.log(logMessage);
+                    };
+                }
 
-                    };
-                    recognition.onerror = function defaultRecognitionEventHandler_onerror(event)
+                if(_recognition)
+                {
+                    try
                     {
-                        console.log("SpeechAPI->SpeechToText->ContinuousSession(): Recognition error!");
-                        console.log(event);
-                    };
+                        _recognition.onstart = onstart_scopePreserverWrapper(desiredFunctionToExecute,sessionInstance);
+                    }
+                    catch(caughtException)
+                    {
+                        logMessage = LOG_PREFIX+"ERROR: An exception was encountered when attempting to assign the recognition.onstart event handler.";
+                        console.log(logMessage);
+                        console.log(caughtException);
+                    }
 
                 }
                 else
                 {
-                    console.log("ERROR: Speech recognition is not supported by this browser!");
+                    logMessage = LOG_PREFIX+"ERROR: Unable to assign onstart event handler. Recognition object not set.";
+                    console.log(logMessage);
                 }
-
-                //Public stuff here:
-                return {
-                    // Public methods and variables
-                    getFinalTranscript: function ()
-                    {
-                        return finalTranscript;
-                    },
-                    resetFinalTranscript: function ()
-                    {
-                        finalTranscript="";
-                        //console.log("SpeechAPI->SpeechToText->ContinuousSession->resetInterimTranscript(): Final transcript reset.");
-                    },
-                    appendToFinalTranscript: function (desiredValue)
-                    {
-                        console.log("SpeechAPI->SpeechToText->ContinuousSession->appendToFinalTranscript()");
-                        if(desiredValue)
-                        {
-                            if(typeof desiredValue == STRING_TYPE)
-                            {
-                                if(desiredValue != EMPTY_STRING)
-                                {
-                                    finalTranscript+=desiredValue;
-                                }
-                            }
-                        }
-                    },
-                    getInterimTranscript: function ()
-                    {
-                        return interimTranscript;
-                    },
-                    resetInterimTranscript: function ()
-                    {
-                        interimTranscript="";
-                        //console.log("SpeechAPI->SpeechToText->ContinuousSession->resetInterimTranscript(): Interim transcript reset.");
-                    },
-                    appendToInterimTranscript: function (desiredValue)
-                    {
-                        if(desiredValue)
-                        {
-                            if(typeof desiredValue == STRING_TYPE)
-                            {
-                                if(desiredValue != EMPTY_STRING)
-                                {
-                                    interimTranscript+=desiredValue;
-                                }
-                            }
-                        }
-                    },
-                    getRecognitionObject: function()
-                    {
-                        return recognition;
-                    },
-                    getStartRequestedFlag: function()
-                    {
-                        return startRequested;
-                    },
-                    start: function()
-                    {
-                        startRequested = true;
-                        stopRequested  = false;
-                        recognition.start();
-                        console.log("SpeechAPI.SpeechToText.ContinuousSession.getInstance().start(): Starting session.");
-                    },
-                    getStopRequestedFlag: function()
-                    {
-                        return stopRequested;
-                    },
-                    stop: function()
-                    {
-                        stopRequested  = true;
-                        startRequested = false;
-                        recognition.stop();
-                        console.log("SpeechAPI.SpeechToText.ContinuousSession.getInstance().stop(): Stopping session.");
-                    },
-
-
-                };
-
             };
 
-            return{
-                // Get the Singleton instance if one exists
-                // or create one if it doesn't
-                getInstance: function ()
+            this.setEventHandler_onend = function(desiredFunctionToExecute)
+            {
+                var FUNCTION_NAME = "setEventHandler_onend()";
+                var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+                var logMessage    = null;
+
+                var sessionInstance = this;
+
+                function onend_scopePreserverWrapper(desiredFunctionToExecute, desiredSessionInstance)
                 {
-                    if ( !instance )
+                    return function onend_scopePreserverWrapperReturnPayload(event)
                     {
-                        instance = init();
-                    }
-                    return instance;
+                        var PAYLOAD_FUNCTION_NAME = "onend_scopePreserverWrapperReturnPayload()";
+                        logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
+                        console.log(logMessage);
+
+                        if(desiredSessionInstance)
+                        {
+                            try
+                            {
+                                desiredSessionInstance.appendToPrivateString("  Hi!  I've been appended by onend_scopePreserverWrapperReturnPayload()!");
+                                console.log(desiredSessionInstance.getPrivateString());
+                            }
+                            catch(caughtException)
+                            {
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to work with the recognition session instance.";
+                                console.log(logMessage);
+                                console.log(caughtException);
+                            }
+                        }
+                        if(desiredFunctionToExecute)
+                        {
+                            if(isFunction(desiredFunctionToExecute))
+                            {
+                                try
+                                {
+                                    desiredFunctionToExecute(event);
+                                }
+                                catch (caughtException)
+                                {
+                                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to execute the desired recognition.onend event handler.";
+                                    console.log(logMessage);
+                                    console.log(caughtException);
+                                }
+                            }
+                            else
+                            {
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: The desiredFunctionToExecute variable was not a function!";
+                                console.log(logMessage);
+                                console.log(caughtException);
+                            }
+                        }
+                        logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Leaving "+PAYLOAD_FUNCTION_NAME+".";
+                        console.log(logMessage);
+                    };
                 }
 
+                if(_recognition)
+                {
+                    try
+                    {
+                        _recognition.onend = onend_scopePreserverWrapper(desiredFunctionToExecute,sessionInstance);
+                    }
+                    catch(caughtException)
+                    {
+                        logMessage = LOG_PREFIX+"ERROR: An exception was encountered when attempting to assign the recognition.onend event handler.";
+                        console.log(logMessage);
+                        console.log(caughtException);
+                    }
+                }
+                else
+                {
+                    logMessage = LOG_PREFIX+"ERROR: Unable to assign onend event handler. Recognition object not set.";
+                    console.log(logMessage);
+                }
+            };
+
+            this.setEventHandler_onerror = function(desiredFunctionToExecute)
+            {
+                var FUNCTION_NAME = "setEventHandler_onerror()";
+                var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+                var logMessage    = null;
+
+                var sessionInstance = this;
+
+                function onerror_scopePreserverWrapper(desiredFunctionToExecute, desiredSessionInstance)
+                {
+                    return function onerror_scopePreserverWrapperReturnPayload(event)
+                    {
+                        var PAYLOAD_FUNCTION_NAME = "onerror_scopePreserverWrapperReturnPayload()";
+                        logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
+                        console.log(logMessage);
+
+                        if(desiredSessionInstance)
+                        {
+                            try
+                            {
+                                desiredSessionInstance.appendToPrivateString("  Hi!  I've been appended by "+PAYLOAD_FUNCTION_NAME+"!");
+                                console.log(desiredSessionInstance.getPrivateString());
+                            }
+                            catch(caughtException)
+                            {
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to work with the recognition session instance.";
+                                console.log(logMessage);
+                                console.log(caughtException);
+                            }
+                        }
+                        if(desiredFunctionToExecute)
+                        {
+                            if(isFunction(desiredFunctionToExecute))
+                            {
+                                try
+                                {
+                                    desiredFunctionToExecute(event);
+                                }
+                                catch (caughtException)
+                                {
+                                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to execute the desired recognition.onerror event handler.";
+                                    console.log(logMessage);
+                                    console.log(caughtException);
+                                }
+                            }
+                            else
+                            {
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: The desiredFunctionToExecute variable was not a function!";
+                                console.log(logMessage);
+                                console.log(caughtException);
+                            }
+                        }
+                        logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Leaving "+PAYLOAD_FUNCTION_NAME+".";
+                        console.log(logMessage);
+                    };
+                }
+
+                if(_recognition)
+                {
+                    try
+                    {
+                        _recognition.onerror = onerror_scopePreserverWrapper(desiredFunctionToExecute,sessionInstance);
+                    }
+                    catch(caughtException)
+                    {
+                        logMessage = LOG_PREFIX+"ERROR: An exception was encountered when attempting to assign the recognition.onerror event handler.";
+                        console.log(logMessage);
+                        console.log(caughtException);
+                    }
+                    /*
+                     if (isFunction(desiredFunctionToExecute))
+                     {
+                     _recognition.onerror = desiredFunctionToExecute;
+                     }
+                     else
+                     {
+                     logMessage = LOG_PREFIX+"Error: Unable to assign onerror event handler. The desiredFunctionToExecute variable was not a function!";
+                     console.log(logMessage);
+                     }
+                     */
+                }
+                else
+                {
+                    logMessage = LOG_PREFIX+"Error: Unable to assign onerror event handler. Recognition object not set.";
+                    console.log(logMessage);
+                }
             };
 
         }

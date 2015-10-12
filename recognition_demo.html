@@ -66,7 +66,7 @@
     document.getElementById(elementToHideID).style.display="none";
 
     //Here we detect if speech synthesis is supported by the client browser:
-    if(SpeechAPI.SpeechToText.isSupported())
+    if(SpeechAPI.SpeechRecognition.isSupported())
     {
         //If it's supported, we need to update our UI:
         console.log("STT Supported!");
@@ -84,7 +84,6 @@
 <script>
     function ContinuousSession()
     {
-
         //Private constants
         var _CLASS_NAME           = function(){return "ContinuousSession";};
         var _EMPTY_STRING         = function(){return "";};
@@ -100,7 +99,7 @@
 
         var _privateString = "private message";
 
-        if(SpeechAPI.SpeechToText.isSupported())
+        if(SpeechAPI.SpeechRecognition.isSupported())
         {
             _recognition                = new webkitSpeechRecognition();
             _recognition.continuous     = true;
