@@ -424,6 +424,8 @@ var SpeechAPI =
                             {
                                 desiredSessionInstance.appendToPrivateString("  Hi!  I've been appended by onstart_scopePreserverWrapperReturnPayload()!");
                                 console.log(desiredSessionInstance.getPrivateString());
+
+                                //TODO: Stop the session if it was not requested.
                             }
                             catch(caughtException)
                             {
@@ -503,6 +505,8 @@ var SpeechAPI =
                             {
                                 desiredSessionInstance.appendToPrivateString("  Hi!  I've been appended by onend_scopePreserverWrapperReturnPayload()!");
                                 console.log(desiredSessionInstance.getPrivateString());
+
+                                //TODO: Determine if we need to restart the session and do so if needed.
                             }
                             catch(caughtException)
                             {
@@ -574,12 +578,27 @@ var SpeechAPI =
                         logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
                         console.log(logMessage);
 
+                        var logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An error was encountered during recognition!"
+                        console.log(logMessage);
+                        console.log(event);
+
+                        //TODO: Determine error type and behave according to encountered error!
+                        //TODO: Maybe set an error encountered flag and or restart session flag to restart if the error type is something like 'no-speech'?
+
                         if(desiredSessionInstance)
                         {
                             try
                             {
                                 desiredSessionInstance.appendToPrivateString("  Hi!  I've been appended by "+PAYLOAD_FUNCTION_NAME+"!");
                                 console.log(desiredSessionInstance.getPrivateString());
+
+                                var currentInterimTranscript = desiredSessionInstance.getInterimTranscript();
+                                var currentFinalTranscript   = desiredSessionInstance.getFinalTranscript();
+
+                                var logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Current interim transcript: " + currentInterimTranscript;
+                                console.log(logMessage);
+                                var logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Current final transcript: " + currentFinalTranscript;
+                                console.log(logMessage);
                             }
                             catch(caughtException)
                             {
