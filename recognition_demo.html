@@ -36,11 +36,11 @@
 
         <br/>
         <label>Interim Transcript:</label><br/>
-        <textarea id='textarea_interimTranscript' readonly='true'></textarea>
+        <textarea id='textarea_interimTranscript' rows='2' cols='50' readonly='true'></textarea>
 
         <br/>
         <label>Final Transcript:</label><br/>
-        <textarea id='textarea_finalTranscript' readonly='true'></textarea>
+        <textarea id='textarea_finalTranscript' rows='5' cols='50' readonly='true'></textarea>
     </div>
     <br />
     <br />
@@ -666,6 +666,9 @@
 
         console.log(event);
 
+        var INTERIM_TRANSCRIPT_TEXTAREA_ID = "textarea_InterimTranscript";
+        var FINAL_TRANSCRIPT_TEXTAREA_ID   = "textarea_FinalTranscript";
+
         var resultIndex       = event.resultIndex;
         var resultArrayLength = event.results.length;
 
@@ -711,6 +714,9 @@
 
         console.log("Interim: "+test.getInterimTranscript());
         console.log("Final:   "+test.getFinalTranscript());
+
+        document.getElementById(INTERIM_TRANSCRIPT_TEXTAREA_ID).value = test.getInterimTranscript();
+        document.getElementById(FINAL_TRANSCRIPT_TEXTAREA_ID).value = test.getFinalTranscript();
     });
 
     function recognitionStartClickEventHandler()
