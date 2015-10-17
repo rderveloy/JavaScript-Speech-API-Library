@@ -155,11 +155,19 @@ var SpeechAPI =
 
             this.saveEncounteredError = function(desiredErrorObject)
             {
+                var FUNCTION_NAME = "saveEncounteredError()";
+                var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+
                 if(desiredErrorObject)
                 {
-                    if(typeof(desiredErrorObject)==_ERROR_TYPE_STRING())
+                    if(desiredErrorObject instanceof webkitSpeechRecognitionError)
                     {
                         _encounteredError = desiredErrorObject;
+                    }
+                    else
+                    {
+                        var logMessage = LOG_PREFIX + "Unable to save error object.  Object was not an instance of webkitSpeechRecognitionError";
+                        console.log(logMessage);
                     }
                 }
             };
