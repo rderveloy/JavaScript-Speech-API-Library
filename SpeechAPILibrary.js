@@ -112,6 +112,7 @@ var SpeechAPI =
             var _EMPTY_STRING         = function(){return "";};
             var _STRING_TYPE_STRING   = function(){return "string";};
             var _FUNCTION_TYPE_STRING = function(){return "function";};
+            var _ERROR_TYPE_STRING    = function(){return "SpeechRecognitionError";};
 
             //Private variables:
             var _startRequested    = false;
@@ -119,6 +120,7 @@ var SpeechAPI =
             var _recognition       = null;
             var _interimTranscript = "";
             var _finalTranscript   = "";
+            var _encounteredError = null;
 
             var _privateString = "private message";
 
@@ -146,6 +148,27 @@ var SpeechAPI =
             };
 
             //Public functions:
+            this.errorEncountered = function()
+            {
+                return (_encounteredError!=null);
+            };
+
+            this.saveEncounteredError = function(desiredErrorObject)
+            {
+                if(desiredErrorObject)
+                {
+                    if(typeof(desiredErrorObject)==_ERROR_TYPE_STRING())
+                    {
+                        _encounteredError = desiredErrorObject;
+                    }
+                }
+            };
+
+            this.getEncounteredError = function()
+            {
+                return _encounteredError;
+            };
+
             this.getFinalTranscript = function()
             {
                 return _finalTranscript;
@@ -314,8 +337,9 @@ var SpeechAPI =
                 var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
                 var logMessage    = null;
 
-                _startRequested = true;
-                _stopRequested  = false;
+                _startRequested   = true;
+                _stopRequested    = false;
+                _encounteredError = null;
 
                 if(!preserveTranscripts)
                 {
@@ -422,10 +446,13 @@ var SpeechAPI =
                         {
                             try
                             {
-                                desiredSessionInstance.appendToPrivateString("  Hi!  I've been appended by onstart_scopePreserverWrapperReturnPayload()!");
-                                console.log(desiredSessionInstance.getPrivateString());
-
-                                //TODO: Stop the session if it was not requested.
+                                //Stop the session if it was not requested:
+                                if(!desiredSessionInstance.startRequested())
+                                {
+                                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Session has started, but it was not requested.  Requesting stop.";
+                                    console.log(logMessage);
+                                    desiredSessionInstance.stop();
+                                }
                             }
                             catch(caughtException)
                             {
@@ -454,7 +481,6 @@ var SpeechAPI =
                             {
                                 logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: The desiredFunctionToExecute variable was not a function!";
                                 console.log(logMessage);
-                                console.log(caughtException);
                             }
                         }
                         logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Leaving "+PAYLOAD_FUNCTION_NAME+".";
@@ -507,6 +533,18 @@ var SpeechAPI =
                                 console.log(desiredSessionInstance.getPrivateString());
 
                                 //TODO: Determine if we need to restart the session and do so if needed.
+                                if(!desiredSessionInstance.stopRequested())
+                                {
+                                    if(desiredSessionInstance.errorEncountered())
+                                    {
+                                        //TODO: resume session if the error message is no-speech.
+                                    }
+                                    else
+                                    {
+                                        //TODO: resume session as it was not ended by an error and it was not requested
+                                    }
+                                }
+
                             }
                             catch(caughtException)
                             {
@@ -534,7 +572,6 @@ var SpeechAPI =
                             {
                                 logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: The desiredFunctionToExecute variable was not a function!";
                                 console.log(logMessage);
-                                console.log(caughtException);
                             }
                         }
                         logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Leaving "+PAYLOAD_FUNCTION_NAME+".";
@@ -578,15 +615,23 @@ var SpeechAPI =
                         logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
                         console.log(logMessage);
 
-                        //TODO: Add exception handling around the retreival of the error message:
-
-                        var eventErrorMessage = event.error;
-
-                        var logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An error was encountered during recognition!  The event's error message was: '" +eventErrorMessage+"'."
+                        logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An error was encountered during recognition!";
                         console.log(logMessage);
 
-
                         console.log(event);
+
+                        try
+                        {
+                            var eventErrorMessage = event.error;
+                            logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": The event's error message was: '" +eventErrorMessage+"'.";
+                            console.log(logMessage);
+                        }
+                        catch(caughtException)
+                        {
+                            logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to examine the event error object.";
+                            console.log(logMessage);
+                            console.log(caughtException);
+                        }
 
                         //TODO: Determine error type and behave according to encountered error!
                         //TODO: Maybe set an error encountered flag and or restart session flag to restart if the error type is something like 'no-speech'?
@@ -595,15 +640,14 @@ var SpeechAPI =
                         {
                             try
                             {
-                                desiredSessionInstance.appendToPrivateString("  Hi!  I've been appended by "+PAYLOAD_FUNCTION_NAME+"!");
-                                console.log(desiredSessionInstance.getPrivateString());
+                                desiredSessionInstance.saveEncounteredError(event);
 
                                 var currentInterimTranscript = desiredSessionInstance.getInterimTranscript();
                                 var currentFinalTranscript   = desiredSessionInstance.getFinalTranscript();
 
-                                var logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Current interim transcript: " + currentInterimTranscript;
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Current interim transcript: " + currentInterimTranscript;
                                 console.log(logMessage);
-                                var logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Current final transcript: " + currentFinalTranscript;
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Current final transcript: " + currentFinalTranscript;
                                 console.log(logMessage);
                             }
                             catch(caughtException)
@@ -632,7 +676,6 @@ var SpeechAPI =
                             {
                                 logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: The desiredFunctionToExecute variable was not a function!";
                                 console.log(logMessage);
-                                console.log(caughtException);
                             }
                         }
                         logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Leaving "+PAYLOAD_FUNCTION_NAME+".";
