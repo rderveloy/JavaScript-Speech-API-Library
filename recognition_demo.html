@@ -114,8 +114,25 @@
     });
 
     test.setEventHandler_onerror(function onErrorEventHandler(event){
+        var FUNCTION_NAME = "onErrorEventHandler";
         console.log("Recognition error!");
+
         //TODO: Update ui for error messages.
+        if(test.errorEncountered())
+        {
+            var messageToShow = "An error has occured.";
+
+            try
+            {
+                messageToShow += "  The error message was: "+test.getEncounteredError().error;
+            }
+            catch(caughtException)
+            {
+                var logMessage = FUNCTION_NAME + "ERROR: An exception was encountered while attempting to retrieve the encountered error's error message.";
+                console.log(logMessage);
+            }
+            alert(messageToShow);
+        }
     });
 
     test.setEventHandler_onresult(function onResultEventHandler(event){
