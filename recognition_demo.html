@@ -120,16 +120,50 @@
         //TODO: Update ui for error messages.
         if(test.errorEncountered())
         {
-            var messageToShow = "An error has occured.";
+            var messageToShow = null;
 
             try
             {
-                messageToShow += "  The error message was: "+test.getEncounteredError().error;
+                var errorMessage = test.getEncounteredError().error;
+                console.log(SpeechAPI.SpeechRecognition.Errors.NETWORK());
+
+                switch(errorMessage)
+                {
+                    case SpeechAPI.SpeechRecognition.Errors.NO_SPEECH():
+                        messageToShow = "  An error has occured.  No speech was detected.  Please try again.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.NETWORK():
+                        messageToShow = "  An error has occured.  There appears to be a network issue.  Please check your internet connection.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.ABORTED():
+                        messageToShow = "  An error has occured.  The session was unexpectedly aborted.  Please try again.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.AUDIO_CAPTURE():
+                        messageToShow = "  There was an error capturing audio.  Please check your microphone's connection and volume level.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.NOT_ALLOWED():
+                        messageToShow = "  Microphone was access denied.  Please allow access to your microphone.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.SERVICE_NOT_ALLOWED():
+                        messageToShow = "  Microphone was access denied.  Please allow access to your microphone.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.BAD_GRAMMAR():
+                        messageToShow = "  Internal grammar error.  Please contact the site administrators.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.LANGUAGE_NOT_SUPPORTED():
+                        messageToShow = "  Unsupported language error.  Please contact the site administrators.";
+                        break;
+                    default:
+                        messageToShow = "  An unrecognized error has occurred.  The error message was: '"+test.getEncounteredError().error+"'";
+                        break;
+                }
             }
             catch(caughtException)
             {
+                messageToShow = "An unknown error has occured.  Please try again.  If you continue to have issues, please contact the site administrators.";
                 var logMessage = FUNCTION_NAME + "ERROR: An exception was encountered while attempting to retrieve the encountered error's error message.";
                 console.log(logMessage);
+                console.log(caughtException);
             }
             alert(messageToShow);
         }

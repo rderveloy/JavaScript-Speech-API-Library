@@ -105,6 +105,17 @@ var SpeechAPI =
             }
             return result;
         },
+        Errors:
+        {
+            NETWORK:                function(){return "network";},                //Some network communication that was required to complete the recognition failed.
+            NO_SPEECH:              function(){return "no-speech";},              //No speech was detected.
+            ABORTED:                function(){return "aborted";},                //Speech input was aborted somehow, maybe by some user-agent-specific behavior such as UI that lets the user cancel speech input.
+            AUDIO_CAPTURE:          function(){return "audio-capture";},          //Audio capture failed.
+            NOT_ALLOWED:            function(){return "not-allowed";},            //The user agent is not allowing any speech input to occur for reasons of security, privacy or user preference.
+            SERVICE_NOT_ALLOWED:    function(){return "service-not-allowed";},    //The user agent is not allowing the web application requested speech service, but would allow some speech service, to be used either because the user agent doesn't support the selected one or because of reasons of security, privacy or user preference.
+            BAD_GRAMMAR:            function(){return "bad-grammar";},            //There was an error in the speech recognition grammar or semantic tags, or the grammar format or semantic tag format is unsupported.
+            LANGUAGE_NOT_SUPPORTED: function(){return "language-not-supported";}, //The language was not supported.*/
+        },
         ContinuousSession: function ()
         {
             //Private constants
@@ -112,7 +123,6 @@ var SpeechAPI =
             var _EMPTY_STRING         = function(){return "";};
             var _STRING_TYPE_STRING   = function(){return "string";};
             var _FUNCTION_TYPE_STRING = function(){return "function";};
-            var _ERROR_TYPE_STRING    = function(){return "SpeechRecognitionError";};
 
             //Private variables:
             var _startRequested    = false;
@@ -537,9 +547,6 @@ var SpeechAPI =
                         {
                             try
                             {
-                                desiredSessionInstance.appendToPrivateString("  Hi!  I've been appended by onend_scopePreserverWrapperReturnPayload()!");
-                                console.log(desiredSessionInstance.getPrivateString());
-
                                 //TODO: Determine if we need to restart the session and do so if needed.
                                 if(!desiredSessionInstance.stopRequested())
                                 {
