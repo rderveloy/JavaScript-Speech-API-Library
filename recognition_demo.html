@@ -87,7 +87,7 @@
 
     //TODO: Continue session when ended without request or error.
     //TODO: Appropriately hide/show buttons in onstart and onend event handlers.
-    //TODO: Reset final transcript when user ends session.
+    //TODO: Reset final transcript when user starts a new session.
 
     var interimTranscript = "";
     var finalTranscript   = "";
@@ -96,6 +96,8 @@
 
 
     test.setEventHandler_onend(function onEndEventHandler(event){
+        var FUNCTION_NAME = "onEndEventHandler()";
+
         console.log("Recognition ended.");
         console.log("Stop Requested: "+test.stopRequested());
 
@@ -106,18 +108,22 @@
 
         document.getElementById(elementToHideID).style.display="none";
         document.getElementById(elementToShowID).style.display="block";
+
+        //TODO: Update UI to indicate the session has stopped.
     });
 
     test.setEventHandler_onstart(function onStartEventHandler(event){
+        var FUNCTION_NAME = "onStartEventHandler()";
+
         console.log("Recognition started.");
         console.log("Start Requested: "+test.startRequested());
+
+        //TODO: Update UI to indicate the session is in progress.
     });
 
     test.setEventHandler_onerror(function onErrorEventHandler(event){
-        var FUNCTION_NAME = "onErrorEventHandler";
-        console.log("Recognition error!");
+        var FUNCTION_NAME = "onErrorEventHandler()";
 
-        //TODO: Update ui for error messages.
         if(test.errorEncountered())
         {
             var messageToShow = null;
@@ -170,55 +176,12 @@
     });
 
     test.setEventHandler_onresult(function onResultEventHandler(event){
-        console.log("Recognition result!");
+        var FUNCTION_NAME = "onResultEventHandler()";
 
         console.log(event);
 
         var INTERIM_TRANSCRIPT_TEXTAREA_ID = "textarea_interimTranscript";
         var FINAL_TRANSCRIPT_TEXTAREA_ID   = "textarea_finalTranscript";
-
-        var resultIndex       = event.resultIndex;
-        var resultArrayLength = event.results.length;
-
-        interimTranscript = "";
-        test.resetInterimTranscriptToEmptyString();
-
-        for (var currentIndex=resultIndex; currentIndex < resultArrayLength; ++currentIndex)
-        {
-            var currentRecognitionResult             = event.results[currentIndex];
-            var currentRecognitionResultAlternative  = currentRecognitionResult[0];
-            var transcriptToAppend                   = currentRecognitionResultAlternative.transcript;
-
-            if(IGNORE_SPOKEN_PUNCTUATION_COMMANDS)
-            {
-                var PERIOD_SEARCH     = '.';
-                var PERIOD_REPLACE    = ' period';
-                var COMMA_SEARCH      = ',';
-                var COMMA_REPLACE     = ' comma';
-                var COLON_SEARCH      = ':';
-                var COLON_REPLACE     = ' colon';
-                var PARAGRAPH_SEARCH  = '\n\n';
-                var PARAGRAPH_REPLACE = ' new paragraph ';
-
-                transcriptToAppend = transcriptToAppend.replace(PERIOD_SEARCH,    PERIOD_REPLACE);
-                transcriptToAppend = transcriptToAppend.replace(COMMA_SEARCH,     COMMA_REPLACE);
-                transcriptToAppend = transcriptToAppend.replace(COLON_SEARCH,     COLON_REPLACE);
-                transcriptToAppend = transcriptToAppend.replace(PARAGRAPH_SEARCH, PARAGRAPH_REPLACE);
-            }
-
-            if(currentRecognitionResult.isFinal)
-            {
-                finalTranscript += transcriptToAppend;
-                test.appendStringToFinalTranscript(transcriptToAppend);
-            }
-            else
-            {
-                interimTranscript += transcriptToAppend;
-                test.appendStringToInterimTranscript(transcriptToAppend);
-            }
-        }
-        //console.log("Interim: "+interimTranscript);
-        //console.log("Final:   "+finalTranscript);
 
         console.log("Interim: "+test.getInterimTranscript());
         console.log("Final:   "+test.getFinalTranscript());
@@ -229,6 +192,8 @@
 
     function recognitionStartClickEventHandler()
     {
+        var FUNCTION_NAME = "recognitionStartClickEventHandler()";
+
         console.log("recognitionStartClickEventHandler(): Entering function.");
         var elementToHideID = "button_sttStart";
         var elementToShowID = "button_sttStop";
@@ -243,6 +208,8 @@
 
     function recognitionStopClickEventHandler()
     {
+        var FUNCTION_NAME = "recognitionStopClickEventHandler()";
+
         console.log("recognitionStopClickEventHandler(): Entering function.");
 
         var elementToHideID = "button_sttStop";
