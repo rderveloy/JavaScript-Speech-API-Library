@@ -32,8 +32,8 @@ var SpeechAPI =
             }
 
             return result;
-        },//End isSupported
-        executeFunctionIfVoicesInstalled : function(desiredFunctionToExecute)
+        }//End isSupported
+        ,executeFunctionIfVoicesInstalled : function(desiredFunctionToExecute)
         {
             function scopePreserverWrapper(desiredFunctionToExecute)
             {
@@ -58,8 +58,8 @@ var SpeechAPI =
             }
 
             window.speechSynthesis.onvoiceschanged = scopePreserverWrapper(desiredFunctionToExecute);
-        }, //End executeFunctionIfVoicesInstalled
-        utter : function(textToSpeak)
+        } //End executeFunctionIfVoicesInstalled
+        ,utter : function(textToSpeak)
         {
             var STRING_TYPE  = 'string';
             var EMPTY_STRING = '';
@@ -82,8 +82,8 @@ var SpeechAPI =
                 }
             }
         }//End utter
-    },//End SpeechSynthesis
-    SpeechRecognition :
+    }//End SpeechSynthesis
+    ,SpeechRecognition :
     {
         isSupported: function()
         {   
@@ -104,35 +104,36 @@ var SpeechAPI =
                 console.log(caughtException);
             }
             return result;
-        },
-        Errors:
+        }
+        ,Errors:
         {
-            NETWORK:                function(){return "network";},                //Some network communication that was required to complete the recognition failed.
-            NO_SPEECH:              function(){return "no-speech";},              //No speech was detected.
-            ABORTED:                function(){return "aborted";},                //Speech input was aborted somehow, maybe by some user-agent-specific behavior such as UI that lets the user cancel speech input.
-            AUDIO_CAPTURE:          function(){return "audio-capture";},          //Audio capture failed.
-            NOT_ALLOWED:            function(){return "not-allowed";},            //The user agent is not allowing any speech input to occur for reasons of security, privacy or user preference.
-            SERVICE_NOT_ALLOWED:    function(){return "service-not-allowed";},    //The user agent is not allowing the web application requested speech service, but would allow some speech service, to be used either because the user agent doesn't support the selected one or because of reasons of security, privacy or user preference.
-            BAD_GRAMMAR:            function(){return "bad-grammar";},            //There was an error in the speech recognition grammar or semantic tags, or the grammar format or semantic tag format is unsupported.
-            LANGUAGE_NOT_SUPPORTED: function(){return "language-not-supported";}, //The language was not supported.*/
-        },
-        ContinuousSession: function ()
+            NETWORK:                 function(){return "network";}                //Some network communication that was required to complete the recognition failed.
+            ,NO_SPEECH:              function(){return "no-speech";}              //No speech was detected.
+            ,ABORTED:                function(){return "aborted";}                //Speech input was aborted somehow, maybe by some user-agent-specific behavior such as UI that lets the user cancel speech input.
+            ,AUDIO_CAPTURE:          function(){return "audio-capture";}          //Audio capture failed.
+            ,NOT_ALLOWED:            function(){return "not-allowed";}            //The user agent is not allowing any speech input to occur for reasons of security, privacy or user preference.
+            ,SERVICE_NOT_ALLOWED:    function(){return "service-not-allowed";}    //The user agent is not allowing the web application requested speech service, but would allow some speech service, to be used either because the user agent doesn't support the selected one or because of reasons of security, privacy or user preference.
+            ,BAD_GRAMMAR:            function(){return "bad-grammar";}            //There was an error in the speech recognition grammar or semantic tags, or the grammar format or semantic tag format is unsupported.
+            ,LANGUAGE_NOT_SUPPORTED: function(){return "language-not-supported";} //The language was not supported.*/
+        }
+        ,ContinuousSession: function ()
         {
             //Private constants
             var _CLASS_NAME           = function(){return "ContinuousSession";};
             var _EMPTY_STRING         = function(){return "";};
             var _STRING_TYPE_STRING   = function(){return "string";};
+            var _BOOLEAN_TYPE_STRING  = function(){return "boolean";};
             var _FUNCTION_TYPE_STRING = function(){return "function";};
 
             //Private variables:
-            var _startRequested    = false;
-            var _stopRequested     = false;
-            var _recognition       = null;
-            var _interimTranscript = "";
-            var _finalTranscript   = "";
-            var _encounteredError = null;
-
-            var _privateString = "private message";
+            var _startRequested                  = false;
+            var _stopRequested                   = false;
+            var _recognition                     = null;
+            var _interimTranscript               = "";
+            var _finalTranscript                 = "";
+            var _encounteredError                = null;
+            var _ignoreSpokenPunctuationCommands = true;
+            var _includeConfidencesInTranscripts = false;
 
             if(SpeechAPI.SpeechRecognition.isSupported())
             {
@@ -153,11 +154,20 @@ var SpeechAPI =
                         result = true;
                     }
                 }
-
                 return result;
             };
 
             //Public functions:
+            this.includeConfidencesInTranscripts = function()
+            {
+                return _includeConfidencesInTranscripts;
+            };
+
+            this.ignoreSpokenPunctuationCommands = function()
+            {
+                return _ignoreSpokenPunctuationCommands;
+            };
+
             this.errorEncountered = function()
             {
                 return (_encounteredError!=null);
@@ -321,24 +331,6 @@ var SpeechAPI =
                 }
             };
 
-            this.getPrivateString = function()
-            {
-                return _privateString;
-            };
-
-            this.appendToPrivateString = function(desiredText)
-            {
-                if(desiredText)
-                {
-                    _privateString+=desiredText;
-                }
-            };
-
-            this.resetPrivateString = function()
-            {
-                _privateString=_EMPTY_STRING();
-            };
-
             this.startRequested = function()
             {
                 return _startRequested;
@@ -349,22 +341,66 @@ var SpeechAPI =
                 return _stopRequested;
             };
 
-            this.start = function(preserveTranscripts)
+            this.start = function(resetTranscriptsFromLastSession, includeConfidencesInTranscripts, ignoreSpokenPunctuationCommands)
             {
-                var FUNCTION_NAME = "start()";
-                var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
-                var logMessage    = null;
+                var FUNCTION_NAME    = "start()";
+                var LOG_PREFIX       = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
+                var logMessage       = null;
 
-                _startRequested   = true;
-                _stopRequested    = false;
-                _encounteredError = null;
+                var resetTranscripts = null;
 
-                if(!preserveTranscripts)
+                _startRequested      = true;
+                _stopRequested       = false;
+                _encounteredError    = null;
+
+                if
+                (
+                    (ignoreSpokenPunctuationCommands!=undefined)
+                    &&(ignoreSpokenPunctuationCommands!=null)
+                    &&(typeof(ignoreSpokenPunctuationCommands)==_BOOLEAN_TYPE_STRING())
+                )
+                {
+                    _ignoreSpokenPunctuationCommands = ignoreSpokenPunctuationCommands;
+                }
+                else
+                {
+                    _ignoreSpokenPunctuationCommands = true;
+                }
+
+                if
+                (
+                    (resetTranscriptsFromLastSession!=undefined)
+                    &&(resetTranscriptsFromLastSession!=null)
+                    &&(typeof(resetTranscriptsFromLastSession)==_BOOLEAN_TYPE_STRING())
+                )
+                {
+                    resetTranscripts = resetTranscriptsFromLastSession;
+                }
+                else
+                {
+                    resetTranscripts = true;
+                }
+
+                if
+                (
+                    (includeConfidencesInTranscripts!=undefined)
+                    &&(includeConfidencesInTranscripts!=null)
+                    &&(typeof(includeConfidencesInTranscripts)==_BOOLEAN_TYPE_STRING())
+                )
+                {
+                    _includeConfidencesInTranscripts = includeConfidencesInTranscripts;
+                }
+                else
+                {
+                    _includeConfidencesInTranscripts = false;
+                }
+
+                if(resetTranscripts)
                 {
                     this.resetFinalTranscriptToEmptyString();
                     this.resetInterimTranscriptToEmptyString();
-                    this.resetPrivateString();
                 }
+
 
                 if(_recognition)
                 {
@@ -411,6 +447,7 @@ var SpeechAPI =
                         logMessage = LOG_PREFIX+"Exception encountered while requesting recognition stop.";
                         console.log(logMessage);
                         console.log(err);
+                        console.log(err);
                     }
                 }
                 else
@@ -426,23 +463,135 @@ var SpeechAPI =
                 var LOG_PREFIX    = _CLASS_NAME()+"."+FUNCTION_NAME+": ";
                 var logMessage    = null;
 
+                var sessionInstance = this;
+
+                function onresult_scopePreserverWrapper(desiredFunctionToExecute, desiredSessionInstance)
+                {
+                    return function onresult_scopePreserverWrapperReturnPayload(event)
+                    {
+                        var PAYLOAD_FUNCTION_NAME = "onresult_scopePreserverWrapperReturnPayload()";
+                        logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
+                        console.log(logMessage);
+                        if(desiredSessionInstance)
+                        {
+                            try
+                            {
+                                //Handle on result event:
+                                var resultIndex       = event.resultIndex;
+                                var resultArrayLength = event.results.length;
+
+                                interimTranscript = "";
+                                desiredSessionInstance.resetInterimTranscriptToEmptyString();
+
+                                for (var currentIndex=resultIndex; currentIndex < resultArrayLength; ++currentIndex)
+                                {
+                                    var currentRecognitionResult            = event.results[currentIndex];
+                                    var currentRecognitionResultAlternative = currentRecognitionResult[0];
+                                    var transcriptToAppend                  = currentRecognitionResultAlternative.transcript;
+                                    var transcriptConfidence                = Math.floor(currentRecognitionResultAlternative.confidence*100);
+
+                                    if(desiredSessionInstance.ignoreSpokenPunctuationCommands())
+                                    {
+                                        var PERIOD_SEARCH     = '.';
+                                        var PERIOD_REPLACE    = ' period';
+                                        var COMMA_SEARCH      = ',';
+                                        var COMMA_REPLACE     = ' comma';
+                                        var COLON_SEARCH      = ':';
+                                        var COLON_REPLACE     = ' colon';
+                                        var PARAGRAPH_SEARCH  = '\n\n';
+                                        var PARAGRAPH_REPLACE = ' new paragraph ';
+
+                                        transcriptToAppend = transcriptToAppend.replace(PERIOD_SEARCH,    PERIOD_REPLACE);
+                                        transcriptToAppend = transcriptToAppend.replace(COMMA_SEARCH,     COMMA_REPLACE);
+                                        transcriptToAppend = transcriptToAppend.replace(COLON_SEARCH,     COLON_REPLACE);
+                                        transcriptToAppend = transcriptToAppend.replace(PARAGRAPH_SEARCH, PARAGRAPH_REPLACE);
+                                    }
+
+                                    if(desiredSessionInstance.includeConfidencesInTranscripts())
+                                    {
+                                        transcriptToAppend += "[" + transcriptConfidence + "]";
+                                    }
+
+                                    if(currentRecognitionResult.isFinal)
+                                    {
+                                        desiredSessionInstance.appendStringToFinalTranscript(transcriptToAppend);
+                                    }
+                                    else
+                                    {
+                                        desiredSessionInstance.appendStringToInterimTranscript(transcriptToAppend);
+                                    }
+                                }
+
+                            }
+                            catch(caughtException)
+                            {
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to work with the recognition session instance.";
+                                console.log(logMessage);
+                                console.log(caughtException);
+                            }
+                        }
+
+                        if(desiredFunctionToExecute)
+                        {
+                            if(isFunction(desiredFunctionToExecute))
+                            {
+                                try
+                                {
+                                    desiredFunctionToExecute(event);
+                                }
+                                catch (caughtException)
+                                {
+                                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to execute the desired recognition.onstart event handler.";
+                                    console.log(logMessage);
+                                    console.log(caughtException);
+                                }
+                            }
+                            else
+                            {
+                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: The desiredFunctionToExecute variable was not a function!";
+                                console.log(logMessage);
+                            }
+                        }
+                    };
+                }
+
                 if(_recognition)
                 {
-                    if(isFunction(desiredFunctionToExecute))
+                    try
                     {
-                        _recognition.onresult=desiredFunctionToExecute;
+                        _recognition.onresult = onresult_scopePreserverWrapper(desiredFunctionToExecute,sessionInstance);
                     }
-                    else
+                    catch(caughtException)
                     {
-                        logMessage = LOG_PREFIX+"Error: Unable to assign onresult event handler. The desiredFunctionToExecute variable was not a function!";
+                        logMessage = LOG_PREFIX+"ERROR: An exception was encountered when attempting to assign the recognition.onresult event handler.";
                         console.log(logMessage);
+                        console.log(caughtException);
                     }
+
                 }
                 else
                 {
-                    logMessage = LOG_PREFIX+"Error: Unable to assign onresult event handler. Recognition object not set.";
+                    logMessage = LOG_PREFIX+"ERROR: Unable to assign onresult event handler. Recognition object not set.";
                     console.log(logMessage);
                 }
+                //
+                //if(_recognition)
+                //{
+                //    if(isFunction(desiredFunctionToExecute))
+                //    {
+                //        _recognition.onresult=desiredFunctionToExecute;
+                //    }
+                //    else
+                //    {
+                //        logMessage = LOG_PREFIX+"Error: Unable to assign onresult event handler. The desiredFunctionToExecute variable was not a function!";
+                //        console.log(logMessage);
+                //    }
+                //}
+                //else
+                //{
+                //    logMessage = LOG_PREFIX+"Error: Unable to assign onresult event handler. Recognition object not set.";
+                //    console.log(logMessage);
+                //}
             };
 
             this.setEventHandler_onstart = function(desiredFunctionToExecute)
