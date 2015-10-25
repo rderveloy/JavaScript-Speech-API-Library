@@ -482,62 +482,71 @@ var SpeechAPI =
                         var PAYLOAD_FUNCTION_NAME = "onresult_scopePreserverWrapperReturnPayload()";
                         logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Entering "+PAYLOAD_FUNCTION_NAME+".";
                         console.log(logMessage);
+
                         if(desiredSessionInstance)
                         {
-                            try
+                            if(!desiredSessionInstance.stopRequested())
                             {
-                                //Handle on result event:
-                                var resultIndex       = event.resultIndex;
-                                var resultArrayLength = event.results.length;
-
-                                interimTranscript = "";
-                                desiredSessionInstance.resetInterimTranscriptToEmptyString();
-
-                                for (var currentIndex=resultIndex; currentIndex < resultArrayLength; ++currentIndex)
+                                try
                                 {
-                                    var currentRecognitionResult            = event.results[currentIndex];
-                                    var currentRecognitionResultAlternative = currentRecognitionResult[0];
-                                    var transcriptToAppend                  = currentRecognitionResultAlternative.transcript;
-                                    var transcriptConfidence                = Math.floor(currentRecognitionResultAlternative.confidence*100);
+                                    //Handle on result event:
+                                    var resultIndex = event.resultIndex;
+                                    var resultArrayLength = event.results.length;
 
-                                    if(desiredSessionInstance.ignoreSpokenPunctuationCommands())
+                                    interimTranscript = "";
+                                    desiredSessionInstance.resetInterimTranscriptToEmptyString();
+
+                                    for (var currentIndex = resultIndex; currentIndex < resultArrayLength; ++currentIndex)
                                     {
-                                        var PERIOD_SEARCH     = '.';
-                                        var PERIOD_REPLACE    = ' period';
-                                        var COMMA_SEARCH      = ',';
-                                        var COMMA_REPLACE     = ' comma';
-                                        var COLON_SEARCH      = ':';
-                                        var COLON_REPLACE     = ' colon';
-                                        var PARAGRAPH_SEARCH  = '\n\n';
-                                        var PARAGRAPH_REPLACE = ' new paragraph ';
+                                        var currentRecognitionResult = event.results[currentIndex];
+                                        var currentRecognitionResultAlternative = currentRecognitionResult[0];
+                                        var transcriptToAppend = currentRecognitionResultAlternative.transcript;
+                                        var transcriptConfidence = Math.floor(currentRecognitionResultAlternative.confidence * 100);
 
-                                        transcriptToAppend = transcriptToAppend.replace(PERIOD_SEARCH,    PERIOD_REPLACE);
-                                        transcriptToAppend = transcriptToAppend.replace(COMMA_SEARCH,     COMMA_REPLACE);
-                                        transcriptToAppend = transcriptToAppend.replace(COLON_SEARCH,     COLON_REPLACE);
-                                        transcriptToAppend = transcriptToAppend.replace(PARAGRAPH_SEARCH, PARAGRAPH_REPLACE);
+                                        if (desiredSessionInstance.ignoreSpokenPunctuationCommands())
+                                        {
+                                            var PERIOD_SEARCH = '.';
+                                            var PERIOD_REPLACE = ' period';
+                                            var COMMA_SEARCH = ',';
+                                            var COMMA_REPLACE = ' comma';
+                                            var COLON_SEARCH = ':';
+                                            var COLON_REPLACE = ' colon';
+                                            var PARAGRAPH_SEARCH = '\n\n';
+                                            var PARAGRAPH_REPLACE = ' new paragraph ';
+
+                                            transcriptToAppend = transcriptToAppend.replace(PERIOD_SEARCH, PERIOD_REPLACE);
+                                            transcriptToAppend = transcriptToAppend.replace(COMMA_SEARCH, COMMA_REPLACE);
+                                            transcriptToAppend = transcriptToAppend.replace(COLON_SEARCH, COLON_REPLACE);
+                                            transcriptToAppend = transcriptToAppend.replace(PARAGRAPH_SEARCH, PARAGRAPH_REPLACE);
+                                        }
+
+                                        if (desiredSessionInstance.includeConfidencesInTranscripts())
+                                        {
+                                            transcriptToAppend += "[" + transcriptConfidence + "]";
+                                        }
+
+                                        if (currentRecognitionResult.isFinal)
+                                        {
+                                            desiredSessionInstance.appendStringToFinalTranscript(transcriptToAppend);
+                                        }
+                                        else
+                                        {
+                                            desiredSessionInstance.appendStringToInterimTranscript(transcriptToAppend);
+                                        }
                                     }
 
-                                    if(desiredSessionInstance.includeConfidencesInTranscripts())
-                                    {
-                                        transcriptToAppend += "[" + transcriptConfidence + "]";
-                                    }
-
-                                    if(currentRecognitionResult.isFinal)
-                                    {
-                                        desiredSessionInstance.appendStringToFinalTranscript(transcriptToAppend);
-                                    }
-                                    else
-                                    {
-                                        desiredSessionInstance.appendStringToInterimTranscript(transcriptToAppend);
-                                    }
                                 }
-
+                                catch (caughtException)
+                                {
+                                    logMessage = LOG_PREFIX + PAYLOAD_FUNCTION_NAME + ": ERROR: An exception was encountered when attempting to work with the recognition session instance.";
+                                    console.log(logMessage);
+                                    console.log(caughtException);
+                                }
                             }
-                            catch(caughtException)
+                            else
                             {
-                                logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": ERROR: An exception was encountered when attempting to work with the recognition session instance.";
+                                logMessage = LOG_PREFIX + PAYLOAD_FUNCTION_NAME + ": Stop was requested. Ignoring result event.";
                                 console.log(logMessage);
-                                console.log(caughtException);
                             }
                         }
 
