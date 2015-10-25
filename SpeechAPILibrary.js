@@ -248,6 +248,16 @@ var SpeechAPI =
                     {
                         if(desiredText!=_EMPTY_STRING())
                         {
+                            if(_finalTranscript!=_EMPTY_STRING())
+                            {
+                                var lastCharOfFinalTranscript = _finalTranscript.charAt(_finalTranscript.length - 1);
+                                var firstCharOfDesiredText    = desiredText.charAt(0);
+
+                                if(lastCharOfFinalTranscript != ' ' && firstCharOfDesiredText != ' ')
+                                {
+                                    _finalTranscript+=' ';
+                                }
+                            }
                             _finalTranscript += desiredText;
                         }
                         else
@@ -696,16 +706,45 @@ var SpeechAPI =
                         {
                             try
                             {
-                                //TODO: Determine if we need to restart the session and do so if needed.
-                                if(!desiredSessionInstance.stopRequested())
+                                /**
+                                 * We need to restart the session if:
+                                 * 1) Not requested & no error.
+                                 * 2) Not requested & error was no-speech.
+                                 */
+                                if(desiredSessionInstance.stopRequested())
                                 {
+                                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Stop was requested.";
+                                    console.log(logMessage);
+                                }
+                                else
+                                {
+                                    logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Stop was not requested.";
+                                    console.log(logMessage);
+
+                                    var resetTranscriptsFromLastSession = false;
+                                    var includeConfidencesInTranscripts = desiredSessionInstance.includeConfidencesInTranscripts();
+                                    var ignoreSpokenPunctuationCommands = desiredSessionInstance.ignoreSpokenPunctuationCommands();
+                                    console.log(logMessage);
+
                                     if(desiredSessionInstance.errorEncountered())
                                     {
-                                        //TODO: resume session if the error message is no-speech.
+                                        logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Stop was triggered by error.";
+                                        console.log(logMessage);
+
+                                        //Only resume the session if the error message is no-speech:
+                                        if(desiredSessionInstance.getEncounteredError().error==SpeechAPI.SpeechRecognition.Errors.NO_SPEECH())
+                                        {
+                                            logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": The trigger error was 'no-speech'. Restarting session.";
+                                            console.log(logMessage);
+
+                                            desiredSessionInstance.start(resetTranscriptsFromLastSession,includeConfidencesInTranscripts,ignoreSpokenPunctuationCommands);
+                                        }
                                     }
                                     else
                                     {
-                                        //TODO: resume session as it was not ended by an error and it was not requested
+                                        logMessage = LOG_PREFIX+PAYLOAD_FUNCTION_NAME+": Stop was not triggered by error. Restarting session.";
+                                        console.log(logMessage);
+                                        desiredSessionInstance.start(resetTranscriptsFromLastSession,includeConfidencesInTranscripts,ignoreSpokenPunctuationCommands);
                                     }
                                 }
 
@@ -796,9 +835,6 @@ var SpeechAPI =
                             console.log(logMessage);
                             console.log(caughtException);
                         }
-
-                        //TODO: Determine error type and behave according to encountered error!
-                        //TODO: Maybe set an error encountered flag and or restart session flag to restart if the error type is something like 'no-speech'?
 
                         if(desiredSessionInstance)
                         {
