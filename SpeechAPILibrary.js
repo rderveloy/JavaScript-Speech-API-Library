@@ -135,6 +135,9 @@ var SpeechAPI =
             var _ignoreSpokenPunctuationCommands = true;
             var _includeConfidencesInTranscripts = false;
 
+            var _startTime                       = null;
+            var _endTime                         = null;
+
             if(SpeechAPI.SpeechRecognition.isSupported())
             {
                 _recognition                = new webkitSpeechRecognition();
@@ -190,6 +193,16 @@ var SpeechAPI =
                         console.log(logMessage);
                     }
                 }
+            };
+
+            this.getSessionStartTime = function()
+            {
+              return _startTime;
+            };
+
+            this.getSessionEndTime = function()
+            {
+                return _endTime;
             };
 
             this.getEncounteredError = function()
@@ -420,6 +433,8 @@ var SpeechAPI =
                         logMessage = LOG_PREFIX+"Requesting recognition start...";
                         console.log(logMessage);
                         _recognition.start();
+                        _startTime = new Date().getTime();
+                        _endTime   = null;
                     }
                     catch(err)
                     {
@@ -451,6 +466,7 @@ var SpeechAPI =
                         logMessage = LOG_PREFIX+"Requesting recognition stop...";
                         console.log(logMessage);
                         _recognition.stop();
+                        _endTime = new Date().getTime();
                     }
                     catch(err)
                     {
