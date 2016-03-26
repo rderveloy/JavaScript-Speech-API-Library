@@ -1,0 +1,192 @@
+<!--
+-- Author:  Robert Derveloy
+-- Written: 2013-01-15
+-- 
+-- Copyright (c) 2013-2015 -  Robert Derveloy
+-- 
+-- This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+-- To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/.
+--
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JavaScript Speech API Library Demo</title>
+    </head>
+    <body>
+        <section id="section_NoJSWarning">
+            <div id="div_NoJavaScriptWarning">
+                <p>
+                    Sorry!  Your browser does not appear to have JavaScript enabled.  Please enable JavaScript in your browser for this site to function correctly.
+                </p>
+                <p>
+                    If your browser is incapable of running JavaScript, please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of compatible browsers.
+                </p>
+            </div>
+        </section>
+        <section id="section_SpeechSynthesis">
+
+            <div id="div_SpeechSynthesisNotSupportedWarning" style="display:none;">
+                <p>OOPS!</p>
+                <p>Your browser does not appear to support the Speech Synthesis API.  Please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of capable browsers.</p>
+            </div>
+            <div id="div_LoadingVoices" style="display:none;">
+                <p>Yay!  Your browser had indicated that it supports the Speech Synthesis API!</p>
+                <p>If you're seeing this message, we've asked your browser for a list of available voices and are waiting for a reply.  Please be patient...</p>
+            </div>
+            <div id="div_NoVoicesWarning" style="display:none;">
+                <p>OOPS!</p>
+                <p>While your browser is indicating that it supports the Speech Synthesis API, it has not responded to our request in a timely fashion.</p>
+                <p>This could be caused by a number of different reasons.  The most likely of which is that your browser may not officially support the Speech Synthesis API at this time.</p>
+                <p>Please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of capable browsers.</p>
+            </div>
+            <div id="div_speechSynthesisInputs" style="display:none;">
+                <input id="input_speechSynthesis" name="input_speechSynthesis" size='128' value='Son of Jor-El, kneel before Zahd!' /> <!-- I know 'Zahd' should be 'Zod', but speech synthesis often requires phonetic spellings!-->
+                <button onclick="SpeechAPI.SpeechSynthesis.utter(document.getElementById('input_speechSynthesis').value);">Go!</button>
+            </div>
+
+            <br/>
+            <br/>
+        </section>
+        <footer>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a>
+            <br />
+            <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">
+                JavaScript Speech API Library
+            </span>
+            by
+            <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/rderveloy/JavaScript-Sound-Recorder/" property="cc:attributionName" rel="cc:attributionURL">
+                Robert Derveloy
+            </a>
+            is licensed under a
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+                Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
+            </a>.
+        </footer>
+        <script src='SpeechAPILibrary.js'></script>
+        <script>
+            var elementToHideID = "div_NoJavaScriptWarning";
+            document.getElementById(elementToHideID).style.display="none";
+
+            //Here we detect if speech synthesis is supported by the client browser:
+            if(SpeechAPI.SpeechSynthesis.isSupported())
+            {
+                //If it's supported we need to update our UI.
+                console.log("Speech Synthesis Supported!");
+
+                /*
+                 * The browser my signal it supports speech synthesis, but may not have any voices to
+                 * use.  So, we need to request the list of installed voices from the browser to
+                 * determine what to do next.
+                 *
+                 * Since the request to get the list of installed voices is processed asynchronously,
+                 * we cannot guarantee order of execution, so we display a loading voices notice:
+                 */
+                var elementToShowID = "div_LoadingVoices";
+                var loadingVoicesDiv = document.getElementById(elementToShowID);
+                if(loadingVoicesDiv.style.display!="block")
+                {
+                    loadingVoicesDiv.style.display="block";
+                }
+
+                /*
+                 * We want to give the browser time to respond to the request before showing the no voices
+                 * installed warning:
+                 */
+                var TIMEOUT_MILLISECONDS = 2200;
+                var timeoutFunction = function()
+                {
+                    var speechSynthesisInputsDivID = "div_speechSynthesisInputs";
+                    var speechSynthesisInputDiv = document.getElementById(speechSynthesisInputsDivID);
+                    var noVoicesWarningDiv = "div_NoVoicesWarning";
+                    var noVoicesWarningDiv = document.getElementById(noVoicesWarningDiv);
+
+                    if(speechSynthesisInputDiv.style.display!="block")
+                    {
+                        noVoicesWarningDiv.style.display = "block";
+                    }
+                };
+                setTimeout(timeoutFunction, TIMEOUT_MILLISECONDS);
+
+                /*
+                 * Here we define a payload function to be executed in the event that the browser
+                 * has voices installed.
+                 *
+                 * Testing has shown that the window.speechSynthesis.onvoiceschanged event may
+                 * be triggered multiple times.  Therefore, care should be taken in writing the
+                 * payload function.  It will need to be written in a "de-bounce" manner such
+                 * that it won't cause any issues if it is executed multiple times.
+                 */
+                var payloadFunction = function(installedVoiceArray)
+                {
+                    console.log('Blitz and Chitz!');
+                    console.log(installedVoiceArray);
+
+                    if(installedVoiceArray.length>0)
+                    {
+                        //We have voices installed...
+                        //First, hide loading voices notice:
+                        console.log('The browser has voices available!');
+
+                        var elementToHideID = "div_LoadingVoices";
+                        var loadingVoicesDiv = document.getElementById(elementToHideID);
+
+                        if(loadingVoicesDiv.style.display!="none")
+                        {
+                            loadingVoicesDiv.style.display="none";
+                        }
+
+                        //Second, ensure that the no voices warning is hidden:
+                        elementToHideID = "div_NoVoicesWarning";
+                        var noVoicesWarningDiv = document.getElementById(elementToHideID);
+
+                        if(noVoicesWarningDiv.style.display!="none")
+                        {
+                            noVoicesWarningDiv.style.display="none";
+                        }
+
+                        //Third, show our form input controls to the user:
+                        var elementToShowID = "div_speechSynthesisInputs";
+                        var speechSynthesisInputDiv = document.getElementById(elementToShowID);
+
+                        /*
+                         * This function may be triggered multiple times by the browser, so
+                         * make sure to only do things once:
+                         */
+                        if(speechSynthesisInputDiv.style.display!="block")
+                        {
+                            speechSynthesisInputDiv.style.display="block";
+                            //Use the speech synthesis api to say hi to the user:
+                            SpeechAPI.SpeechSynthesis.utter("Hi!  When you're ready, type something, and click the \"GO\" BUTTON!");
+                        }
+
+                    }
+                    else
+                    {
+                        //No voices installed!
+                        console.log('No voices available!');
+                        /*
+                         * IF the browser does not have any voices available, let the user know:
+                         */
+                        var elementToShowID = "div_NoVoicesWarning";
+                        var noVoicesWarningDiv = document.getElementById(elementToShowID);
+                        if(noVoicesWarningDiv.style.display!="block")
+                        {
+                            noVoicesWarningDiv.style.display="block";
+                        }
+                    }
+                };
+
+                //Send the payload function to the API to be executed:
+                SpeechAPI.SpeechSynthesis.executeFunctionIfVoicesInstalled(payloadFunction);
+            }
+            else
+            {
+                console.log("Speech Synthesis Not Supported!");
+                var elementToShowID = "div_SpeechSynthesisNotSupportedWarning";
+                document.getElementById(elementToShowID).style.display="block";
+            }
+
+        </script>
+    </body>
+</html>

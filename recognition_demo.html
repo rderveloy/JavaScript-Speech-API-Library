@@ -1,0 +1,321 @@
+<!--
+-- Author:  Robert Derveloy
+-- Written: 2013-01-15
+-- 
+-- Copyright (c) 2013-2015 -  Robert Derveloy
+-- 
+-- This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+-- To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/.
+--
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Speech API Library Demo</title>
+</head>
+<body>
+<section id="section_NoJSWarning">
+    <div id="div_NoJavaScriptWarning">
+        <p>
+            Sorry!  Your browser does not appear to have JavaScript enabled.  Please enable JavaScript in your browser for this site to function correctly.
+        </p>
+        <p>
+            If your browser is incapable of running JavaScript, please see  <a href="http://caniuse.com/#feat=speech-synthesis" target="_blank">caniuse.com</a> for a list of compatible browsers.
+        </p>
+    </div>
+</section>
+<section id="section_STT">
+    <div id="div_STTNotSupportedWarning" style="display:none;">
+        <p>OOPS!</p>
+        <p>Your browser does not appear to support the Speech Recognition API.  Please see  <a href="http://caniuse.com/#feat=speech-recognition" target="_blank">caniuse.com</a> for a list of capable browsers.</p>
+    </div>
+    <div id="div_sttInputs" style="display:none;">
+
+        <p>
+            <label>Recording Status:&nbsp;</label><label id="label_recordingStatus">Stopped</label><br/>
+            <button id='button_sttStart' onclick="recognitionStartClickEventHandler();">Start Recognition</button>
+            <button id='button_sttStop' onclick="recognitionStopClickEventHandler();" style="display:none;">Stop Recognition</button>
+        </p>
+        <p>
+            <label>Interim Transcript:<br/>
+            <textarea id='textarea_interimTranscript' rows='2' cols='50' readonly></textarea>
+            </label>
+        </p>
+        <p>
+            <label>Final Transcript:<br/>
+            <textarea id='textarea_finalTranscript' rows='5' cols='50' readonly></textarea>
+            </label>
+        </p>
+    </div>
+    <br />
+    <br />
+</section>
+<footer>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a>
+    <br />
+            <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">
+                JavaScript Speech API Library
+            </span>
+    by
+    <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/rderveloy/JavaScript-Speech-API-Library/" property="cc:attributionName" rel="cc:attributionURL">Robert Derveloy</a>
+    is licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+        Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
+    </a>.
+</footer>
+<script src='SpeechAPILibrary.js'></script>
+<script>
+    var ELEMENT_TO_HIDE_ID = "div_NoJavaScriptWarning";
+    var ELEMENT_TO_SHOW_ID = null;
+    document.getElementById(ELEMENT_TO_HIDE_ID).style.display="none";
+
+    //Here we detect if speech synthesis is supported by the client browser:
+    if(SpeechAPI.SpeechRecognition.isSupported())
+    {
+        //If it's supported, we need to update our UI:
+        console.log("STT Supported!");
+        ELEMENT_TO_SHOW_ID = "div_sttInputs";
+    }
+    else
+    {
+        //If it's not supported, let the end user know:
+        console.log("STT Not Supported!");
+        ELEMENT_TO_SHOW_ID = "div_STTNotSupportedWarning";
+    }
+    document.getElementById(ELEMENT_TO_SHOW_ID).style.display="block";
+
+</script>
+<script>
+
+    var interimTranscript = "";
+    var finalTranscript   = "";
+    var IGNORE_SPOKEN_PUNCTUATION_COMMANDS = true;
+    var recognitionSession = new SpeechAPI.SpeechRecognition.ContinuousSession();
+
+    var STOP_BUTTON_ID                 = "button_sttStop";
+    var START_BUTTON_ID                = "button_sttStart";
+    var STATUS_LABEL_ID                = "label_recordingStatus";
+    var INTERIM_TRANSCRIPT_TEXTAREA_ID = "textarea_interimTranscript";
+    var FINAL_TRANSCRIPT_TEXTAREA_ID   = "textarea_finalTranscript";
+
+    function setInterimTranscriptTextAreaValue(desiredText)
+    {
+        document.getElementById(INTERIM_TRANSCRIPT_TEXTAREA_ID).value = desiredText;
+    }
+
+    function setFinalTranscriptTextAreaValue(desiredText)
+    {
+        document.getElementById(FINAL_TRANSCRIPT_TEXTAREA_ID).value = desiredText;
+    }
+
+    function setStatusLabelValue(desiredInnerHTML)
+    {
+        document.getElementById(STATUS_LABEL_ID).innerHTML = desiredInnerHTML;
+    }
+
+    function disableStopButton()
+    {
+        document.getElementById(STOP_BUTTON_ID).disabled = true;
+    }
+
+    function enableStopButton()
+    {
+        document.getElementById(STOP_BUTTON_ID).disabled = false;
+    }
+
+    function disableStartButton()
+    {
+        document.getElementById(START_BUTTON_ID).disabled = true;
+    }
+
+    function enableStartButton()
+    {
+        document.getElementById(START_BUTTON_ID).disabled = false;
+    }
+
+    function hideStopButton()
+    {
+        document.getElementById(STOP_BUTTON_ID).style.display="none";
+    }
+
+    function showStopButton()
+    {
+        document.getElementById(STOP_BUTTON_ID).style.display="block";
+    }
+
+    function hideStartButton()
+    {
+        document.getElementById(START_BUTTON_ID).style.display="none";
+    }
+
+    function showStartButton()
+    {
+        document.getElementById(START_BUTTON_ID).style.display="block";
+    }
+
+
+    recognitionSession.setEventHandler_onend(function onEndEventHandler(event){
+        var FUNCTION_NAME      = "onEndEventHandler()";
+
+        var logMessage = FUNCTION_NAME + ": Recognition ended.";
+        console.log(logMessage);
+
+        logMessage = FUNCTION_NAME + ": Stop Requested: "+recognitionSession.stopRequested();
+        console.log(logMessage);
+
+        console.log(event);
+
+        hideStopButton();
+        showStartButton();
+        enableStopButton();
+
+        //Update UI to indicate the session has stopped:
+        setStatusLabelValue("Stopped");
+    });
+
+    recognitionSession.setEventHandler_onstart(function onStartEventHandler(event){
+        var FUNCTION_NAME                  = "onStartEventHandler()";
+
+        var logMessage = FUNCTION_NAME + ": Recognition started.";
+        console.log(logMessage);
+
+        logMessage = FUNCTION_NAME + ": Start Requested: "+recognitionSession.startRequested();
+        console.log(logMessage);
+
+        //Make sure that the stop button is visible and the start button is hidden:
+        hideStartButton();
+        showStopButton();
+        enableStopButton();
+
+        //Update UI to indicate the session is in progress:
+        setStatusLabelValue("In progress...");
+
+        //Refresh text areas:
+        setInterimTranscriptTextAreaValue(recognitionSession.getInterimTranscript());
+        setFinalTranscriptTextAreaValue(recognitionSession.getFinalTranscript());
+    });
+
+    recognitionSession.setEventHandler_onerror(function onErrorEventHandler(event){
+        var FUNCTION_NAME = "onErrorEventHandler()";
+
+        if(recognitionSession.errorEncountered())
+        {
+            var messageToShow = null;
+            var showAlert = true;
+
+            try
+            {
+                var errorMessage = recognitionSession.getEncounteredError().error;
+                console.log(SpeechAPI.SpeechRecognition.Errors.NETWORK());
+
+                switch(errorMessage)
+                {
+                    case SpeechAPI.SpeechRecognition.Errors.NO_SPEECH():
+                        /*
+                        * WARNING:  Showing alerts for errors that will trigger auto-restarts may cause stop requests to take longer to complete.
+                        */
+                        showAlert = false;
+                        messageToShow = "No speech was detected.  Please try again.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.NETWORK():
+                        showAlert = true;
+                        messageToShow = "ERROR! There appears to be a network issue.  Please check your internet connection.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.ABORTED():
+                        showAlert = true;
+                        messageToShow = "ERROR! The session was unexpectedly aborted.  Please try again.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.AUDIO_CAPTURE():
+                        showAlert = true;
+                        messageToShow = "There was an error capturing audio.  Please check your microphone's connection and volume level.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.NOT_ALLOWED():
+                        showAlert = true;
+                        messageToShow = "Microphone was access denied.  Please allow access to your microphone.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.SERVICE_NOT_ALLOWED():
+                        showAlert = true;
+                        messageToShow = "Microphone was access denied.  Please allow access to your microphone.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.BAD_GRAMMAR():
+                        showAlert = true;
+                        messageToShow =  "Internal grammar error.  Please contact the site administrators.";
+                        break;
+                    case SpeechAPI.SpeechRecognition.Errors.LANGUAGE_NOT_SUPPORTED():
+                        showAlert = true;
+                        messageToShow = "Unsupported language error.  Please contact the site administrators.";
+                        break;
+                    default:
+                        showAlert = true;
+                        messageToShow = "An unrecognized error has occurred.  The error message was: '"+recognitionSession.getEncounteredError().error+"'";
+                        break;
+                }
+            }
+            catch(caughtException)
+            {
+                messageToShow = "An unknown error has occured.  Please try again.  If you continue to have issues, please contact the site administrators.";
+                var logMessage = FUNCTION_NAME + "ERROR: An exception was encountered while attempting to retrieve the encountered error's error message.";
+                console.log(logMessage);
+                console.log(caughtException);
+            }
+            if(showAlert)
+            {
+                alert(messageToShow);
+            }
+        }
+    });
+
+    recognitionSession.setEventHandler_onresult(function onResultEventHandler(event){
+        var FUNCTION_NAME = "onResultEventHandler()";
+
+        console.log(event);
+
+        var logMessage = FUNCTION_NAME + ": Interim: "+recognitionSession.getInterimTranscript();
+        console.log(logMessage);
+
+        logMessage = FUNCTION_NAME + ": Final:   "+recognitionSession.getFinalTranscript();
+        console.log(logMessage);
+
+        setInterimTranscriptTextAreaValue(recognitionSession.getInterimTranscript());
+        setFinalTranscriptTextAreaValue(recognitionSession.getFinalTranscript());
+    });
+
+    function recognitionStartClickEventHandler()
+    {
+        var FUNCTION_NAME = "recognitionStartClickEventHandler()";
+
+        var logMessage = FUNCTION_NAME + ": Entering function.";
+        console.log(logMessage);
+
+        var resetTranscriptsFromLastSession = true;
+        var includeConfidencesInTranscripts = true;
+        var ignoreSpokenPunctuationCommands = true;
+
+        recognitionSession.start(resetTranscriptsFromLastSession,includeConfidencesInTranscripts,ignoreSpokenPunctuationCommands);
+
+        hideStartButton();
+        showStopButton();
+        enableStopButton();
+
+        logMessage = FUNCTION_NAME + ": Leaving function.";
+        console.log(logMessage);
+    }
+
+    function recognitionStopClickEventHandler()
+    {
+        var FUNCTION_NAME   = "recognitionStopClickEventHandler()";
+
+        var logMessage = FUNCTION_NAME + ": Entering function.";
+        console.log(logMessage);
+
+        recognitionSession.stop();
+        setStatusLabelValue("Stopping.  Please wait...");
+        disableStopButton();
+
+        logMessage = FUNCTION_NAME + ": Leaving function.";
+        console.log(logMessage);
+    }
+
+</script>
+</body>
+</html>
